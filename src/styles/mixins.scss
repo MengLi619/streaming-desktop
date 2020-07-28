@@ -1,0 +1,211 @@
+// Positioning
+@mixin absolute($top: auto, $right: auto, $bottom: auto, $left: auto) {
+  display: block;
+  position: absolute;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+}
+
+// Border radius
+@mixin radius($radius: 1) {
+  border-radius: ($radius * 4px);
+}
+
+@mixin center() {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin flex() {
+  display: flex;
+}
+
+@mixin flex--center() {
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex--wrap() {
+  flex-wrap: wrap;
+}
+
+@mixin flex--space-between() {
+  justify-content: space-between;
+}
+
+@mixin flex--justify-start() {
+  justify-content: flex-start;
+}
+
+@mixin flex--align-start() {
+  align-items: flex-start;
+}
+
+@mixin flex--align-center() {
+  align-items: center;
+}
+
+@mixin flex--column() {
+  flex-direction: column;
+}
+
+@mixin flex--grow() {
+  flex-grow: 1;
+}
+
+@mixin flex__column() {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+}
+
+// Aspect ratio for responsive height/width
+@mixin aspect-ratio($width, $height) {
+  position: relative;
+
+  &::before {
+    display: block;
+    content: "";
+    width: 100%;
+    padding-top: ($height / $width) * 100%;
+  }
+
+  > .content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+// Backgrounds
+@mixin bg--teal() {
+  background-color: var(--teal);
+}
+
+// Border radius
+@mixin radius($radius: 1) {
+  border-radius: ($radius * 4px);
+}
+
+// Borders
+@mixin border() {
+  border: 1px solid var(--section);
+}
+
+// Hovers
+@mixin icon-hover() {
+  color: var(--icon);
+  @include transition();
+
+  &:hover {
+    color: var(--title);
+  }
+}
+
+@mixin icon--margin() {
+  @include margin-right();
+}
+
+// Margins
+@mixin margin($spacing: 1) {
+  margin: ($spacing * 8px);
+}
+
+@mixin margin-top($spacing: 1) {
+  margin-top: ($spacing * 8px);
+}
+
+@mixin margin-right($spacing: 1) {
+  margin-right: ($spacing * 8px);
+}
+
+@mixin margin-bottom($spacing: 1) {
+  margin-bottom: ($spacing * 8px);
+}
+
+@mixin margin-left($spacing: 1) {
+  margin-left: ($spacing * 8px);
+}
+
+@mixin margin-v-sides($spacing: 1) {
+  margin-top: ($spacing * 8px);
+  margin-bottom: ($spacing * 8px);
+}
+
+@mixin margin-h-sides($spacing: 1) {
+  margin-right: ($spacing * 8px);
+  margin-left: ($spacing * 8px);
+}
+
+// Paddings
+@mixin padding($spacing: 1) {
+  padding: ($spacing * 8px);
+}
+
+@mixin padding-top($spacing: 1) {
+  padding-top: ($spacing * 8px);
+}
+
+@mixin padding-right($spacing: 1) {
+  padding-right: ($spacing * 8px);
+}
+
+@mixin padding-bottom($spacing: 1) {
+  padding-bottom: ($spacing * 8px);
+}
+
+@mixin padding-left($spacing: 1) {
+  padding-left: ($spacing * 8px);
+}
+
+@mixin padding-v-sides($spacing: 1) {
+  padding-top: ($spacing * 8px);
+  padding-bottom: ($spacing * 8px);
+}
+
+@mixin padding-h-sides($spacing: 1) {
+  padding-right: ($spacing * 8px);
+  padding-left: ($spacing * 8px);
+}
+
+// Shadows
+@mixin shadow() {
+  box-shadow: 0 8px 16px var(--shadow);
+}
+
+// Transitiions
+@mixin transition() {
+  transition: all $transition-time;
+}
+
+// Typography
+@mixin weight($normal: $normal) {
+  font-weight: $normal;
+}
+
+@mixin text-align($left: $left) {
+  text-align: $left;
+}
+
+@mixin teal() {
+  color: var(--teal);
+}
+
+@mixin warning() {
+  color: var(--warning);
+}
+
+@mixin letter-spacing() {
+  letter-spacing: 0.6px;
+}
+
+@mixin cursor--pointer() {
+  cursor: pointer;
+}

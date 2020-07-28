@@ -1,8 +1,22 @@
 {
   "name": "streaming-desktop",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "dev": "NODE_ENV=development concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "lint": "tsc --noEmit"
+  },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.14.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0"
+  },
+  "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -10,16 +24,14 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "@types/react-router-dom": "^5.1.5",
+    "concurrently": "^5.2.0",
+    "electron": "^9.1.1",
+    "electron-builder": "^22.7.0",
+    "node-sass": "^4.14.1",
     "react-scripts": "3.4.1",
-    "typescript": "~3.7.2"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "typescript": "~3.7.2",
+    "wait-on": "^5.1.0"
   },
   "eslintConfig": {
     "extends": "react-app"
