@@ -19,7 +19,7 @@ export const SideNav = withRouter(
             <div
               title='Layout'
               className='cell'
-              onClick={() => this.props.history.push('layout')}>
+              onClick={() => this.props.history.push('/layoutEditor')}>
               <i className="fas fa-th-large" aria-hidden="true"/>
             </div>
             <div
