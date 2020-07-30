@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "electron-main.js",
   "scripts": {
-    "start": "rescripts start",
-    "build": "rescripts build",
-    "test": "rescripts test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "NODE_ENV=development concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "lint": "tsc --noEmit"
