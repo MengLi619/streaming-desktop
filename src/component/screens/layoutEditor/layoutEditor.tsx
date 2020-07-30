@@ -9,13 +9,9 @@ export const LayoutEditor = connectLayout(
     private highlightedSlot?: string;
     private canDragSlot = true;
 
-    constructor(props: Props) {
-      super(props);
-    }
-
     public render() {
       return (
-        <div className='layout editor-container'>
+        <div className='layout-editor editor-container'>
           {this.renderSideBar()}
           <div className={'template-container'}>
             {this.renderLayout()}

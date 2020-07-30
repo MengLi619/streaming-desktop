@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain,  } = require('electron');
 const path = require('path');
 const url= require('url');
 
@@ -33,3 +33,29 @@ function createWindow() {
 
 app.on('ready', createWindow);
 app.allowRendererProcessReuse = true;
+
+ipcMain.on('showDialog', (event, args) => {
+  const { component, ...options } = args;
+  const dialog = new BrowserWindow({
+    show: false,
+    frame: false,
+    modal: true,
+    parent: mainWindow,
+    fullscreenable: false,
+    titleBarStyle: 'hidden',
+    backgroundColor: '#17242D',
+    webPreferences: { nodeIntegration: true },
+    ...options,
+  });
+  if (process.env.NODE_ENV === 'development') {
+    dialog.loadURL(`http://localhost:3000/${component}`);
+  } else {
+    dialog.loadURL(
+      url.format({
+        pathname: path.join(__dirname, `../index.html#${component}`),
+        protocol: 'file:',
+        slashes: true
+      })
+    );
+  }
+});

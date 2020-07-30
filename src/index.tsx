@@ -13,12 +13,14 @@ ReactDOM.render(
   <React.StrictMode>
     <LayoutProvider>
       <BrowserRouter>
-        <Main>
-          <Switch>
-            <Route exact path='/' component={Studio} />
-            <Route exact path='/layoutEditor' component={LayoutEditor} />
-          </Switch>
-        </Main>
+        <Switch>
+          <Main>
+            <Switch>
+              <Route exact path='/' component={Studio} />
+              <Route exact path='/layoutEditor' component={LayoutEditor} />
+            </Switch>
+          </Main>
+        </Switch>
       </BrowserRouter>
     </LayoutProvider>
   </React.StrictMode>,

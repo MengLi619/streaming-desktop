@@ -1,7 +1,6 @@
 import React from 'react';
-import { BaseElement } from '../baseElement';
 
-export class Preview extends BaseElement {
+export class Preview extends React.Component {
 
   render() {
     return <h2>Preview</h2>

@@ -1,7 +1,6 @@
 import React from 'react';
-import { BaseElement } from '../baseElement';
 
-export class ProgramLocal extends BaseElement {
+export class ProgramLocal extends React.Component {
 
   render() {
     return <h2>Program Local</h2>

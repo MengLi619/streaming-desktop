@@ -3,6 +3,7 @@ import './main.scss';
 import { SideNav } from './sideNav';
 
 export class Main extends React.Component {
+
   render() {
     return (
       <div className="main night-theme">

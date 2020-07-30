@@ -8,7 +8,7 @@ export const DefaultLayout = connectLayout(
   class DefaultLayout extends React.Component<Props> {
     render() {
       return (
-        <div className='default-layout'>
+        <div className='layout default-layout'>
           {
             this.props.layout?.slots.map((slot: string) => {
               const Element = this.props.getElementInSlot(slot)?.component;
@@ -16,7 +16,7 @@ export const DefaultLayout = connectLayout(
                 <div
                   key={slot}
                   id={slot}
-                  className={`default-${slot}`}>
+                  className={`cell default-${slot}`}>
                   { Element && <Element /> }
                 </div>
               );
