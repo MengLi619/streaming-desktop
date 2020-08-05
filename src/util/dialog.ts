@@ -1,5 +1,4 @@
 import { ipcRenderer } from 'electron';
-import * as fs from 'fs';
 
 export type DialogOptions = {
   component: string;
@@ -8,6 +7,22 @@ export type DialogOptions = {
   height: number;
 };
 
-export function showDialog(options: DialogOptions) {
+export function showDialog<T>(options: DialogOptions): Promise<T | undefined> {
   ipcRenderer.send('showDialog', options);
+  return new Promise<T>(resolve => {
+    ipcRenderer.once('dialogConfirmed', (event, data) => {
+      resolve(data as T);
+    });
+    ipcRenderer.once('dialogCanceled', () => {
+      resolve(undefined);
+    })
+  });
+}
+
+export function cancelDialog() {
+  ipcRenderer.send('cancelDialog');
+}
+
+export function confirmDialog<T>(data: T) {
+  ipcRenderer.send('confirmDialog', data);
 }

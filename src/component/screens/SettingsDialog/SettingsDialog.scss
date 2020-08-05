@@ -1,0 +1,50 @@
+@import "../../../styles/index";
+
+.settings {
+  @include transition();
+
+  & /deep/ h2 {
+    // reset 'capitalize' transform that works weird when text has a highlight caused by the search
+    text-transform: none;
+  }
+
+  display: flex;
+  align-content: stretch;
+  align-items: stretch;
+  flex: 1;
+  margin: -16px;
+
+  .disabled {
+    opacity: 0.2;
+  }
+
+  .settings-container {
+    @include padding-right(2);
+    @include padding-top(2);
+
+    flex-grow: 1;
+    overflow: auto;
+
+    .input-container,
+    .alignable-input {
+      flex-direction: column;
+
+      .input-label,
+      .input-wrapper,
+      .input-body {
+        width: 100%;
+      }
+
+      .bitmask-input > div {
+        width: auto;
+      }
+
+      .input-label {
+        label {
+          margin-bottom: 8px;
+          line-height: 16px;
+        }
+      }
+    }
+  }
+}

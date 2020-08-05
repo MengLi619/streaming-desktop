@@ -1,0 +1,16 @@
+@import "../../../styles/index";
+
+.nav-menu:not(.nav-menu--child) {
+  @include padding-top(2);
+  @include padding-right(3);
+
+  flex: 0 0 120px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 0;
+}
+
+.nav-menu--child {
+  padding: 0;
+  margin: 0;
+}

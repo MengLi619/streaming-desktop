@@ -1,61 +1,119 @@
-const { app, BrowserWindow, ipcMain,  } = require('electron');
+const electron = require('electron');
+const { app, ipcMain } = electron;
+const BrowserWindow = electron.BrowserWindow;
+
 const path = require('path');
-const url= require('url');
+const isDev = require('electron-is-dev');
 
 let mainWindow;
+let workerWindow;
 
-function createWindow() {
-  // Create the browser window.
+function startApp() {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
     webPreferences: {
       nodeIntegration: true,
     }
   });
-
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL(`http://localhost:3000`);
-  } else {
-    mainWindow.loadURL(
-      url.format({
-        pathname: path.join(__dirname, '../index.html'),
-        protocol: 'file:',
-        slashes: true
-      })
-    );
+  mainWindow.loadURL(isDev
+    ? 'http://localhost:3000?windowId=main'
+    : `file://${path.join(__dirname, 'build/index.html?windowId=main')}`);
+  if (isDev) {
+    // Open the DevTools.
+    //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
+    mainWindow.webContents.openDevTools();
   }
+  mainWindow.on('closed', () => mainWindow = null);
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  mainWindow.maximize();
+
+  // worker window
+  workerWindow = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      nodeIntegration: true
+    },
   });
+
+  workerWindow.loadURL(isDev
+    ? 'http://localhost:3000?windowId=worker'
+    : `file://${path.join(__dirname, 'build/index.html?windowId=worker')}`);
+  if (isDev) {
+    workerWindow.webContents.openDevTools({ mode: 'undocked' });
+  }
 }
 
-app.on('ready', createWindow);
-app.allowRendererProcessReuse = true;
+app.allowRendererProcessReuse = false;
 
+app.on('ready', startApp);
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on('activate', () => {
+  if (mainWindow === null) {
+    startApp();
+  }
+});
+
+let dialog;
+let closeByConfirmed;
 ipcMain.on('showDialog', (event, args) => {
   const { component, ...options } = args;
-  const dialog = new BrowserWindow({
-    show: false,
-    frame: false,
+  dialog = new BrowserWindow({
     modal: true,
-    parent: mainWindow,
+    frame: false,
     fullscreenable: false,
-    titleBarStyle: 'hidden',
     backgroundColor: '#17242D',
-    webPreferences: { nodeIntegration: true },
+    titleBarStyle: 'hidden',
+    webPreferences: {
+      nodeIntegration: true
+    },
     ...options,
   });
-  if (process.env.NODE_ENV === 'development') {
+  dialog.removeMenu();
+  dialog.on('close', () => {
+    if (!closeByConfirmed) {
+      console.log(`dialogCanceled`);
+      mainWindow.webContents.send('dialogCanceled');
+    }
+    dialog = null;
+    closeByConfirmed = false;
+  });
+  if (isDev) {
     dialog.loadURL(`http://localhost:3000/${component}`);
   } else {
     dialog.loadURL(
       url.format({
-        pathname: path.join(__dirname, `../index.html#${component}`),
+        pathname: path.join(__dirname, `build/index.html#${component}`),
         protocol: 'file:',
         slashes: true
       })
     );
   }
+});
+
+ipcMain.on('cancelDialog', event => {
+  if (dialog) {
+    dialog.close();
+  }
+});
+
+ipcMain.on('confirmDialog', (event, data) => {
+  console.log(`dialogConfirmed = ${JSON.stringify(data)}`);
+  mainWindow.webContents.send('dialogConfirmed', data);
+  if (dialog) {
+    closeByConfirmed = true;
+    dialog.close();
+  }
+});
+
+ipcMain.on('worker-request', (event, data) => {
+  workerWindow.webContents.send('worker-request', data);
+});
+
+ipcMain.on('worker-response', (event, data) => {
+  mainWindow.webContents.send('worker-response', data);
 });
