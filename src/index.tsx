@@ -14,9 +14,8 @@ import { LayoutProvider } from './component/context/LayoutProvider';
 import { ScenesProvider } from './component/context/ScenesProvider';
 import path from "path";
 import electron from "electron";
-import { isMainWindow, isWorkerWindow } from './util/utils';
+import { isWorkerWindow } from './util/utils';
 import { SettingsDialog } from './component/screens/SettingsDialog/SettingsDialog';
-import { initializeObsHeadless } from './util/obs-headless';
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (isWorkerWindow()) {
@@ -78,7 +77,3 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
-
-if (isMainWindow()) {
-  initializeObsHeadless();
-}

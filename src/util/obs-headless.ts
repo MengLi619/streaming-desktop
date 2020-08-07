@@ -3,11 +3,12 @@ import * as uuid from 'uuid';
 import { credentials } from 'grpc';
 import { StudioClient } from '../obs-headless/studio_grpc_pb';
 import { Scene } from '../types/obs';
-import { SceneAddRequest, SceneAddResponse, SceneSetAsCurrentRequest, ShowCreateRequest, ShowCreateResponse, SourceAddRequest } from '../obs-headless/studio_pb';
+import { SceneAddRequest, SceneAddResponse, SceneSetAsCurrentRequest, Show, ShowCreateRequest, ShowCreateResponse, ShowGetRequest, ShowGetResponse, SourceAddRequest } from '../obs-headless/studio_pb';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
+import { getShowId, saveShowId } from './store';
+import { createScene } from './obs';
 
 const OBS_SERVER_URL = process.env.REACT_APP_OBS_SERVER_URL;
-console.log(`OBS_SERVER_URL=${OBS_SERVER_URL}`);
 if (!OBS_SERVER_URL) {
   throw new Error(`OBS server url should not be empty.`);
 }
@@ -20,16 +21,22 @@ const client: StudioClient = new StudioClient(OBS_SERVER_URL, credentials.create
   'grpc.keepalive_permit_without_calls': 1,
 });
 
-const createShow = promisify(client.showCreate).bind(client);
+const getShow = promisify(client.showGet).bind(client);
+const addShow = promisify(client.showCreate).bind(client);
 const addScene = promisify(client.sceneAdd).bind(client);
 const addSource = promisify(client.sourceAdd).bind(client);
+const stopStudio =  promisify(client.studioStop).bind(client);
 const startStudio =  promisify(client.studioStart).bind(client);
 const sceneSetAsCurrent = promisify(client.sceneSetAsCurrent).bind(client);
 
-let showId: string | undefined;
-let started: boolean | undefined;
+let showId: string | undefined = getShowId();
 
 export async function start() {
+  try {
+    await stopStudio(new Empty());
+  } catch (e) {
+    console.log(`Failed to stop obs server: ${e}`);
+  }
   try {
     await startStudio(new Empty());
   } catch (e) {
@@ -37,12 +44,43 @@ export async function start() {
   }
 }
 
-export async function initializeObsHeadless() {
-  console.log(`initializeObsHeadless`);
+async function createObsHeadlessShow() {
   const showShowRequest = new ShowCreateRequest();
   showShowRequest.setShowName(`show_${uuid.v4()}`);
-  const show = await createShow(showShowRequest) as ShowCreateResponse;
-  showId = show.getShow()?.getId();
+  const show = await addShow(showShowRequest) as ShowCreateResponse;
+  showId = show.getShow()?.getId() as string;
+  console.log(`Created show id: ${showId}`);
+  saveShowId(showId);
+  return show.getShow();
+}
+
+async function getObsHeadlessShow(): Promise<Show> {
+  try {
+    if (!showId) {
+      return await createObsHeadlessShow() as Show;
+    }
+    const request = new ShowGetRequest();
+    request.setShowId(showId as string);
+    const response = await getShow(request) as ShowGetResponse;
+    return response.getShow() as Show;
+  } catch (e) {
+    return await createObsHeadlessShow() as Show;
+  }
+}
+
+export async function getHeadlessScenes(): Promise<Scene[]> {
+  const show = await getObsHeadlessShow();
+  const scenes: Scene[] = [];
+  for (const scene of show.getScenesList() || []) {
+    for (const source of scene.getSourcesList() || []) {
+      scenes.push({
+        ...await createScene(scene.getName(), 'ffmpeg_source', { input: source.getUrl() }),
+        serverSceneId: scene.getId(),
+      });
+
+    }
+  }
+  return scenes;
 }
 
 export async function obsHeadlessCreateScene(scene: Scene) {
@@ -65,10 +103,8 @@ export async function obsHeadlessCreateScene(scene: Scene) {
 }
 
 export async function obsHeadlessSwitchScene(scene: Scene) {
-  if (!started) {
-    await start();
-    started = true;
-  }
+  console.log(`obsHeadlessSwitchScene: ${JSON.stringify(scene)}`);
+  await start();
   const request = new SceneSetAsCurrentRequest();
   request.setShowId(showId as string);
   request.setSceneId(scene.serverSceneId as string);

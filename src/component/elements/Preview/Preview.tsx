@@ -44,8 +44,10 @@ export const Preview = connectScenes(
     private async onTakeClicked() {
       const settings = getSettings();
       if (this.props.previewScene && settings.output?.url) {
+        console.log(`Create program local scene`);
         const programLocalScene = await createProgramLocalScene(this.props.previewScene);
         this.props.setProgramLocalScene(programLocalScene);
+        console.log(`Create program live scene`);
         const programLiveScene = await createProgramLiveScene(settings.output?.url);
         this.props.setProgramLiveScene(programLiveScene);
         await obsHeadlessSwitchScene(this.props.previewScene);

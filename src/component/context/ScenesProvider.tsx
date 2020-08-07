@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Scene } from '../../types/obs';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import { getHeadlessScenes } from '../../util/obs-headless';
+import { isMainWindow } from '../../util/utils';
 
 export type ScenesProps = {
   scenes: Scene[];
@@ -31,6 +33,12 @@ export class ScenesProvider extends React.Component<{}, ScenesProps> {
       setProgramLiveScene: this.setProgramLiveScene.bind(this),
       addScene: this.addScene.bind(this),
     };
+  }
+
+  async componentDidMount() {
+    this.setState({
+      scenes: isMainWindow() ? await getHeadlessScenes() : [],
+    });
   }
 
   public render() {

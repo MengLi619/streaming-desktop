@@ -1,4 +1,4 @@
-import Store from 'electron-store';
+import { getSettings as storeGetSettings, saveSettings as storeSaveSettings } from './store';
 
 export type SettingsState = {
   output?: {
@@ -6,19 +6,16 @@ export type SettingsState = {
   };
 };
 
-const SETTINGS_KEY = 'settings';
-
-const store = new Store();
 let _settings: SettingsState;
 
 export function saveSettings(settings: SettingsState) {
   _settings = settings;
-  store.set(SETTINGS_KEY, _settings);
+  storeSaveSettings(_settings);
 }
 
 export function getSettings(): SettingsState {
   if (!_settings) {
-    _settings = store.get(SETTINGS_KEY, {}) as SettingsState;
+    _settings = storeGetSettings();
   }
   return _settings;
 }
