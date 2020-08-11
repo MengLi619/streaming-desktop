@@ -1,22 +1,21 @@
 import './ModalLayout.scss';
 import React from 'react';
-import { getOS, OS } from '../../../util/operating-systems';
-import { THEME } from '../../../util/constants';
-import { cancelDialog } from '../../../util/dialog';
+import { isMac } from '../../../common/util';
 
 type Props = {
   className?: string;
-  onModalDone: () => void;
+  onCancelClicked: () => void;
+  onDoneClicked: () => void;
 };
 
 export class ModalLayout extends React.Component<Props> {
 
   public render() {
     return (
-      <div id='mainWrapper' className={
-        `this.props.className || '' modal-layout has-titlebar ${THEME} ${getOS() === OS.Mac ? 'modal-layout-mac' : ''}`
-      }>
-        <div className={'modal-layout-content'}>
+      <div
+        id='mainWrapper'
+        className={`modal-layout has-titlebar night-theme ${this.props.className} ${isMac() ? 'modal-layout-mac' : ''}`}>
+        <div className='modal-layout-content'>
           {this.props.children}
         </div>
         <div className="modal-layout-controls">
@@ -28,10 +27,10 @@ export class ModalLayout extends React.Component<Props> {
   };
 
   private cancel() {
-    cancelDialog();
+    this.props.onCancelClicked();
   };
 
   private done() {
-    this.props.onModalDone();
+    this.props.onDoneClicked();
   };
 }

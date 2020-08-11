@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Scenes } from '../elements/Scenes/Scenes';
+import { Sources } from '../elements/Sources/Sources';
 import { Preview } from '../elements/Preview/Preview';
 import { ProgramLocal } from '../elements/ProgramLocal/ProgramLocal';
 import { ProgramLive } from '../elements/ProgramLive/ProgramLive';
@@ -18,9 +18,9 @@ export const layouts: Layout[] = [
 
 export const layoutElements: LayoutElement[] = [
   {
-    type: 'Scenes',
-    title: 'Scenes',
-    component: Scenes,
+    type: 'Sources',
+    title: 'Sources',
+    component: Sources,
   },
   {
     type: 'Preview',
@@ -64,7 +64,7 @@ export class LayoutProvider extends React.Component<{}, LayoutProps> {
         'Preview': '1',
         'ProgramLocal': '2',
         'ProgramLive': '3',
-        'Scenes': '4',
+        'Sources': '4',
       },
       setSlottedElements: this.setElementSlot.bind(this),
       getElementInSlot: this.getElementInSlot.bind(this),

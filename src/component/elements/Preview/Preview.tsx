@@ -1,54 +1,55 @@
 import './Preview.scss';
 import React from 'react';
-import { connectScenes, ScenesProps } from '../../context/ScenesProvider';
 import { Display } from '../../shared/Display/Display';
-import { ContextMenu, MenuItem } from '../../shared/ContextMenu/ContextMenu';
-import { createProgramLiveScene, createProgramLocalScene } from '../../../util/obs';
-import { obsHeadlessSwitchScene } from '../../../util/obs-headless';
-import { getSettings } from '../../../util/settings';
+import { Source } from '../../../types/obs';
+import { Container } from 'typedi';
+import { SourceService } from '../../../service/sourceService';
 
-type Props = ScenesProps;
+type PreviewState = {
+  source?: Source;
+};
 
-export const Preview = connectScenes(
-  class Preview extends React.Component<Props> {
-    private readonly menuItems: MenuItem[];
+export class Preview extends React.Component<{}, PreviewState> {
+  private readonly sourceService: SourceService = Container.get(SourceService);
 
-    constructor(props: Props) {
-      super(props);
-      this.menuItems = [
-        { label: 'Take', onClicked: this.onTakeClicked.bind(this) },
-      ];
-    }
+  constructor(props: {}) {
+    super(props);
+    this.state = {};
+  }
 
-    render() {
-      return (
-        <ContextMenu className='preview' menuItems={this.menuItems}>
-          <div className="studio-controls-top">
-            <h2 className="studio-controls__label">
-              Preview
-            </h2>
-          </div>
-          <div className='display-wrapper'>
+  public componentDidMount() {
+    this.setState({
+      source: this.sourceService.pvwSource,
+    });
+    this.sourceService.pvwSourceChanged.on(this, source => {
+      this.setState({
+        source: source,
+      })
+    });
+  }
+
+  public componentWillUnmount() {
+    this.sourceService.pgmSourceChanged.off(this);
+  }
+
+  public render() {
+    return (
+      <div className={`Preview ${this.state.source ? 'isPreview': ''}`}>
+        <div className='display-container'>
+          <div className='content'>
             {
-              this.props.previewScene &&
+              this.state.source &&
               <Display
-                key={this.props.previewScene.id}
-                sourceId={this.props.previewScene.id}
+                key={this.state.source.id}
+                sourceId={this.state.source.id}
               />
             }
           </div>
-        </ContextMenu>
-      );
-    }
-
-    private async onTakeClicked() {
-      const settings = getSettings();
-      if (this.props.previewScene && settings.output?.url) {
-        const programLocalScene = await createProgramLocalScene(this.props.previewScene);
-        this.props.setProgramLocalScene(programLocalScene);
-        const programLiveScene = await createProgramLiveScene(settings.output?.url);
-        this.props.setProgramLiveScene(programLiveScene);
-        await obsHeadlessSwitchScene(this.props.previewScene);
-      }
-    }
-  });
+        </div>
+        <div className='toolbar'>
+          <h2>PVW预监</h2>
+        </div>
+      </div>
+    );
+  }
+}

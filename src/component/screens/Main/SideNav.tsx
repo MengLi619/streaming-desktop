@@ -1,21 +1,21 @@
 import './SideNav.scss';
 import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { showDialog } from '../../../util/dialog';
-import { saveSettings, SettingsState } from '../../../util/settings';
+import { app } from 'electron';
 
 type Props = RouteComponentProps;
 
 export const SideNav = withRouter(
   class SideNav extends React.Component<Props> {
-    render() {
+
+    public render() {
       return (
         <div className='side-nav'>
           <div className='container'>
             <div
               title="Editor"
               className="main-cell"
-              onClick={() => this.props.history.push('/')}
+              onClick={() => this.props.history.push(`/${this.props.location.search}`)}
             >
               <i className="icon-studio"/>
             </div>
@@ -23,20 +23,14 @@ export const SideNav = withRouter(
               <div
                 title='Layout'
                 className='cell'
-                onClick={() => this.props.history.push('/layoutEditor')}
+                onClick={() => this.props.history.push(`/layoutEditor/${this.props.location.search}`)}
               >
                 <i className="fas fa-th-large" aria-hidden="true"/>
               </div>
               <div
-                title='Settings'
-                className='cell'
-                onClick={() => this.onSettingsClicked()}
-              >
-                <i className="icon-settings"/>
-              </div>
-              <div
                 title='Logout'
                 className='cell'
+                onClick={() => this.onExitClicked()}
               >
                 <i className='fas fa-sign-out-alt'/>
               </div>
@@ -46,15 +40,7 @@ export const SideNav = withRouter(
       );
     }
 
-    private async onSettingsClicked() {
-      const result = await showDialog<SettingsState>({
-        component: 'SettingsDialog',
-        title: 'Settings',
-        width: 600,
-        height: 600,
-      });
-      if (result) {
-        saveSettings(result);
-      }
+    private onExitClicked() {
+      app.exit(0);
     }
   });

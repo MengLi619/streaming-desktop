@@ -1,0 +1,33 @@
+.Switcher {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+
+  .switcher-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 5px 0;
+
+    > h2 {
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  .switcher-content {
+    flex: 1;
+    display: flex;
+
+    .switcher-keyboard {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .switcher-transition {
+       border: 1px solid var(--border);
+    }
+  }
+}

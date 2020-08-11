@@ -51,6 +51,19 @@
   }
 }
 
+.button--key {
+  background-color: var(--button-key);
+  color: var(--button-text);
+
+  &.is-disabled,
+  &:disabled {
+    &:hover {
+      background-color: var(--button);
+      color: var(--title);
+    }
+  }
+}
+
 .button--action {
   background-color: var(--teal);
   border-color: var(--teal);
