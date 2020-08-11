@@ -1,8 +1,6 @@
-import * as React from 'react';
-
 export type LayoutType = 'Default';
 
-export type ElementType = 'Scenes' | 'Preview' | 'ProgramLocal' | 'ProgramLive';
+export type ElementType = 'Sources' | 'Preview' | 'ProgramLocal' | 'ProgramLive';
 
 export type Layout = {
   type: LayoutType,

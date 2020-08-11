@@ -1,0 +1,34 @@
+.PlayList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+
+  .PlayList-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+
+    > h2 {
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  .PlayList-content {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+
+    .PlayList-CGTable {
+      flex: 0 0 50%;
+    }
+
+    .PlayList-DDRTable {
+      flex: 0 0 50%;
+      border-left: 1px solid var(--border);
+    }
+  }
+}

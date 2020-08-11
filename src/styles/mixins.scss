@@ -13,6 +13,10 @@
   border-radius: ($radius * 4px);
 }
 
+@mixin circle() {
+  border-radius: 50%;
+}
+
 @mixin center() {
   position: absolute;
   top: 50%;

@@ -1,0 +1,24 @@
+.DDRTable {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .DDRTable-header {
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+
+    h2 {
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  .rdt_Table {
+    .rdt_TableCol_Sortable {
+      &:hover, &:focus {
+        color: white;
+      }
+    }
+  }
+}

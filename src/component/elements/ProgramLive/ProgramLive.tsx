@@ -1,31 +1,54 @@
 import './ProgramLive.scss';
 import React from 'react';
 import { Display } from '../../shared/Display/Display';
-import { connectScenes, ScenesProps } from '../../context/ScenesProvider';
+import { Container } from 'typedi';
+import { SourceService } from '../../../service/sourceService';
 
-type Props = ScenesProps;
+type ProgramLiveState = {
+  sourceId?: string;
+};
 
-export const ProgramLive = connectScenes(
-  class ProgramLive extends React.Component<Props> {
+export class ProgramLive extends React.Component<{}, ProgramLiveState> {
+  private readonly sourceService: SourceService = Container.get(SourceService);
 
-    render() {
-      return (
-        <div className='program-live'>
-          <div className="studio-controls-top">
-            <h2 className="studio-controls__label">
-              Program Live
-            </h2>
-          </div>
-          <div className='display-wrapper'>
+  constructor(props: {}) {
+    super(props);
+    this.state = {};
+  }
+
+  public componentDidMount() {
+    this.setState({
+      sourceId: this.sourceService.liveSource?.id,
+    });
+    this.sourceService.liveSourceChanged.on(this, source => {
+      this.setState({
+        sourceId: source?.id,
+      });
+    });
+  }
+
+  public componentWillUnmount() {
+    this.sourceService.liveSourceChanged.off(this);
+  }
+
+  public render() {
+    return (
+      <div className='ProgramLocal'>
+        <div className='display-container'>
+          <div className='content'>
             {
-              this.props.programLiveScene &&
+              this.state.sourceId &&
               <Display
-                key={this.props.programLiveScene.id}
-                sourceId={this.props.programLiveScene.id}
+                key={this.state.sourceId}
+                sourceId={this.state.sourceId}
               />
             }
           </div>
         </div>
-      );
-    }
-  });
+        <div className='toolbar'>
+          <h2>LIVE输出</h2>
+        </div>
+      </div>
+    );
+  }
+}

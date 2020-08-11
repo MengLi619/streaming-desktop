@@ -2,11 +2,18 @@ import './Display.scss';
 import * as uuid from 'uuid';
 import React, { RefObject } from 'react';
 import { remote } from "electron";
-import { getOS, isMac, OS } from '../../../util/operating-systems';
-import { createOBSDisplay, createOBSIOSurface, destroyOBSDisplay, moveOBSDisplay, resizeOBSDisplay, setOBSDisplayPaddingColor } from '../../../util/obs';
-import { Rectangle } from '../../../types/obs';
+import { isMac } from '../../../common/util';
+import { Container } from 'typedi';
+import { ObsService } from '../../../service/obsService';
 
-interface DisplayProps {
+export type Rectangle = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+type DisplayProps = {
   sourceId: string;
 }
 
@@ -14,15 +21,17 @@ interface DisplayProps {
 let nwr: any;
 
 // NWR is used to handle display rendering via IOSurface on mac
-if (getOS() === OS.Mac) {
+if (isMac()) {
   nwr = remote.require('node-window-rendering');
 }
 
 const DISPLAY_ELEMENT_POLLING_INTERVAL = 500;
+const FIX_RATIO = 9 / 16;
 
 export class Display extends React.Component<DisplayProps> {
-  private readonly name: string;
+  private readonly obsService = Container.get(ObsService);
   private readonly electronWindowId: number;
+  private readonly name: string;
   private currentPosition: Rectangle = { x: 0, y: 0, width: 0, height: 0 };
   private trackingInterval?: number;
   private ref: RefObject<HTMLDivElement> = React.createRef();
@@ -32,38 +41,33 @@ export class Display extends React.Component<DisplayProps> {
     super(props);
     this.name = uuid.v4();
     this.electronWindowId = remote.getCurrentWindow().id;
-    console.log('display constructor');
   }
 
   async componentDidMount() {
-    console.log(`createOBSDisplay: ${this.electronWindowId}, ${this.name}, ${this.props.sourceId}`);
-    await createOBSDisplay(this.electronWindowId, this.name, this.props.sourceId);
-    await setOBSDisplayPaddingColor(this.name, 11, 22, 28);
+    await this.obsService.createOBSDisplay(this.electronWindowId, this.name, this.props.sourceId);
     if (this.ref.current) {
       this.trackElement(this.ref.current);
     }
   }
 
   async componentWillUnmount() {
-    console.log(`destroyOBSDisplay: ${this.name}`);
-    await destroyOBSDisplay(this.name)
+    if (this.trackingInterval) {
+      clearInterval(this.trackingInterval);
+    }
+    await this.obsService.destroyOBSDisplay(this.name)
     if (isMac()) {
       nwr.destroyWindow(this.name);
       nwr.destroyIOSurface(this.name);
     }
   }
 
-  render() {
+  public render() {
     return (
-      <div className="display" ref={this.ref} />
+      <div className="Display" ref={this.ref} />
     );
   }
 
-  /**
-   * Will keep the display positioned on top of the passed HTML element
-   * @param element the html element to host the display
-   */
-  trackElement(element: HTMLElement) {
+  private trackElement(element: HTMLElement) {
     if (this.trackingInterval) {
       clearInterval(this.trackingInterval);
     }
@@ -99,27 +103,26 @@ export class Display extends React.Component<DisplayProps> {
     this.currentPosition.x = x;
     this.currentPosition.y = y;
     if (isMac()) {
-      console.log(`move window ${this.name} ${x} ${y}`);
       nwr.moveWindow(this.name, x, y);
     } else {
-      await moveOBSDisplay(this.name, x, y);
+      await this.obsService.moveOBSDisplay(this.name, x, y);
     }
   }
 
   async resize(width: number, height: number) {
     this.currentPosition.width = width;
     this.currentPosition.height = height;
-    await resizeOBSDisplay(this.name, width, height);
+    await this.obsService.resizeOBSDisplay(this.name, width, height);
 
     // On mac, resizing the display is not enough, we also have to
     // recreate the window and IOSurface for the new size
-    if (getOS() === OS.Mac) {
+    if (isMac()) {
       if (this.existingWindow) {
         nwr.destroyWindow(this.name);
         nwr.destroyIOSurface(this.name);
       }
 
-      const surface = await createOBSIOSurface(this.name);
+      const surface = await this.obsService.createOBSIOSurface(this.name);
       nwr.createWindow(
         this.name,
         remote.BrowserWindow.fromId(this.electronWindowId).getNativeWindowHandle(),
