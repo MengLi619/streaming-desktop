@@ -1,0 +1,32 @@
+@import '../../../styles/index';
+
+.KeyView {
+  flex: 0 0 calc(11.11% - 10px);
+  margin: 5px;
+  display: flex;
+
+  &.isPreview {
+    button {
+      background-color: var(--preview);
+    }
+  }
+
+  &.isProgram {
+    button {
+      background-color: var(--program);
+    }
+  }
+
+  .button-container {
+    flex: 1;
+    @include aspect-ratio(2, 1);
+
+    .content {
+      display: flex;
+
+      button {
+        flex: 1;
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+@import '../../../styles/index';
+
+.Sources {
+  flex: 1;
+
+  .sources-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

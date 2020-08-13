@@ -1,0 +1,43 @@
+.TransitionView {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+
+  .transition-header {
+    padding: 5px;
+
+    > h2 {
+      text-align: center;
+    }
+  }
+
+  .transition-dropdown {
+    display: flex;
+    flex-direction: row;
+
+    .Dropdown-root {
+      width: 100px;
+      margin: 5px;
+      font-size: 10px;
+    }
+
+    .Dropdown-control {
+      padding: 5px 25px 5px 5px;
+    }
+
+    .Dropdown-arrow {
+      top: 10px;
+    }
+  }
+
+  .transition-controls {
+    display: flex;
+    flex-direction: column;
+
+    button {
+      width: 50px;
+      height: 50px;
+      margin: 5px;
+    }
+  }
+}

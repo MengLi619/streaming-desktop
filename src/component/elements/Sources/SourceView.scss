@@ -1,0 +1,49 @@
+@import '../../../styles/index';
+
+.SourceView {
+  width: calc(16.67% - 2.5px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  background: var(--background);
+
+  &.isPvm {
+    border-color: var(--preview);
+  }
+
+  &.isPgm {
+    border-color: var(--program);
+  }
+
+  .display-container {
+    flex: 1;
+    @include aspect-ratio(16, 9);
+    background-color: var(--display-bg);
+  }
+
+  .toolbar {
+    display: flex;
+    flex-direction: row;
+    padding: 2px 4px;
+    background: var(--titlebar);
+
+    .number {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      @include circle();
+      width: 14px;
+      height: 14px;
+      font-size: 10px;
+      background: var(--button-bg);
+      color: var(--button-text);
+      border: var(--border);
+      text-align: center;
+    }
+
+    .name {
+      flex: 1;
+      text-align: center;
+    }
+  }
+}

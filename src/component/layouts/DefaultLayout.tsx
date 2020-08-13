@@ -1,6 +1,10 @@
 import './DefaultLayout.scss';
 import React from 'react';
 import { connectLayout, LayoutProps } from '../context/LayoutProvider';
+import { Preview } from '../elements/Preview/Preview';
+import { ProgramLocal } from '../elements/ProgramLocal/ProgramLocal';
+import { ProgramLive } from '../elements/ProgramLive/ProgramLive';
+import { Sources } from '../elements/Sources/Sources';
 
 type Props = LayoutProps;
 
@@ -9,19 +13,14 @@ export const DefaultLayout = connectLayout(
     render() {
       return (
         <div className='layout default-layout'>
-          {
-            this.props.layout?.slots.map((slot: string) => {
-              const Element = this.props.getElementInSlot(slot)?.component;
-              return (
-                <div
-                  key={slot}
-                  id={slot}
-                  className={`cell default-${slot}`}>
-                  { Element && <Element /> }
-                </div>
-              );
-            })
-          }
+          <div className='row-1'>
+            <Preview />
+            <ProgramLocal />
+            <ProgramLive />
+          </div>
+          <div className='row-2'>
+            <Sources />
+          </div>
         </div>
       );
     }

@@ -1,6 +1,26 @@
-.program-local {
-  .display-wrapper {
-    flex: 1;
+@import '../../../styles/index';
+
+.ProgramLocal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  border: 1px solid var(--border);
+
+  &.isProgram {
+    border-color: var(--program);
+  }
+
+  .display-container {
+    @include aspect-ratio(16, 9);
+    background-color: var(--display-bg);
+  }
+
+  .toolbar {
     display: flex;
+    justify-content: center;
+    h2 {
+      margin: 5px 0;
+    }
   }
 }
