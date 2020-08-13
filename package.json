@@ -12,7 +12,7 @@
     "postinstall": "node ./scripts/install-native-deps.js",
     "copy-native-deps": "sh ./scripts/copy-native-deps.sh",
     "build-grpc": "node src/build-grpc.js",
-    "local": "env-cmd -f env/local.env concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron --remote-debugging-port=9222 .\"",
+    "local": "env-cmd -f env/local.env concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron --remote-debugging-port=9222 .\"",
     "preelectron-pack": "npm run build",
     "electron-pack": "build -mw"
   },
