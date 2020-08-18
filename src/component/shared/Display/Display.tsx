@@ -2,7 +2,7 @@ import './Display.scss';
 import * as uuid from 'uuid';
 import React, { RefObject } from 'react';
 import { remote } from "electron";
-import { isMac } from '../../../common/util';
+import { isMac, getScaleFactor } from '../../../common/util';
 import { Container } from 'typedi';
 import { ObsService } from '../../../service/obsService';
 
@@ -78,6 +78,7 @@ export class Display extends React.Component<DisplayProps> {
         rect.y !== this.currentPosition.y ||
         rect.width !== this.currentPosition.width ||
         rect.height !== this.currentPosition.height) {
+        console.log(`display rect = ${JSON.stringify(rect)}, element rect = ${JSON.stringify(element.getBoundingClientRect)}`);
         await this.resize(rect.width, rect.height);
         await this.move(rect.x, rect.y);
       }
@@ -87,15 +88,18 @@ export class Display extends React.Component<DisplayProps> {
   }
 
   getCurrentPosition(rect: ClientRect): Rectangle {
+    const scaleFactor = isMac() ? 1 : getScaleFactor();
+
     // Windows: Top-left origin
     // Mac: Bottom-left origin
     const yCoord = isMac() ? window.innerHeight - rect.bottom : rect.top;
+    const borderWidth = 1;
 
     return {
-      x: rect.left,
-      y: yCoord,
-      width: rect.width,
-      height: rect.height,
+      x: (rect.left + 1) * scaleFactor,
+      y: (yCoord + 1) * scaleFactor,
+      width: (rect.width - 2) * scaleFactor,
+      height: (rect.height - 2) * scaleFactor,
     };
   }
 

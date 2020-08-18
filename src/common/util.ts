@@ -1,3 +1,5 @@
+import { remote } from 'electron';
+
 export function isDialogWindow() {
   const url = new URL(window.location.href);
   return url.searchParams.get('window') === 'dialog';
@@ -27,4 +29,10 @@ export function sequence(start: number, end: number): number[] {
     sequence.push(i);
   }
   return sequence;
+}
+
+export function getScaleFactor() {
+  const bounds = remote.getCurrentWindow().getBounds();
+  const currentDisplay = remote.screen.getDisplayMatching(bounds);
+  return currentDisplay.scaleFactor;
 }

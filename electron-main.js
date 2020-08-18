@@ -16,6 +16,7 @@ function startApp() {
       nodeIntegration: true,
     }
   });
+  mainWindow.removeMenu();
   mainWindow.loadURL(`${loadUrl}?window=main`);
   mainWindow.on('closed', () => mainWindow = null);
   mainWindow.maximize();
