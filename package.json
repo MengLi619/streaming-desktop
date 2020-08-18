@@ -12,8 +12,8 @@
     "postinstall": "node ./scripts/install-native-deps.js",
     "copy-native-deps": "sh ./scripts/copy-native-deps.sh",
     "build-grpc": "node src/build-grpc.js",
-    "local": "env-cmd -f env/local.env concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
-    "server": "env-cmd -f env/server.env concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "local": "env-cmd -f env/local.env concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "server": "env-cmd -f env/server.env concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "preelectron-pack": "npm run build",
     "electron-pack": "build -mw"
   },
@@ -22,6 +22,7 @@
     "@grpc/proto-loader": "^0.5.5",
     "axios": "^0.19.2",
     "crash-handler": "https://slobs-crash-handler.s3-us-west-2.amazonaws.com/crash-handler-0.0.0.tar.gz",
+    "cross-env": "^7.0.2",
     "electron-is-dev": "^1.2.0",
     "electron-store": "^5.2.0",
     "env-cmd": "^10.1.0",
