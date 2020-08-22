@@ -1,5 +1,5 @@
 import { Container, Service } from 'typedi';
-import { Source, TransitionType } from '../types/obs';
+import { Source, Transition, TransitionType } from '../types/obs';
 import { SimpleEvent } from '../common/event';
 import * as uuid from 'uuid';
 import { ObsService } from './obsService';
@@ -12,12 +12,12 @@ export class SourceService {
 
   public sources: Source[] = [];
   public pvwSource?: Source;
-  public pgmSource?: Source;
+  public pgmTransition?: Transition;
   public liveSource?: Source;
 
   public sourceAdded = new SimpleEvent<Source>();
   public pvwSourceChanged = new SimpleEvent<Source>();
-  public pgmSourceChanged = new SimpleEvent<Source>();
+  public pgmTransitionChanged = new SimpleEvent<Transition>();
   public liveSourceChanged = new SimpleEvent<Source | undefined>();
 
   public async initialize() {
@@ -55,10 +55,11 @@ export class SourceService {
     this.pvwSourceChanged.emit(this.pvwSource);
   }
 
-  public async take(source: Source, transition: TransitionType = TransitionType.Cut): Promise<void> {
-    await this.obsHeadlessService.switchSource(source);
-    this.pgmSource = source;
-    this.pgmSourceChanged.emit(this.pgmSource);
+  public async take(source: Source, transitionType: TransitionType, transitionDurationMs: number): Promise<void> {
+    const transition = await this.obsService.switchSource(this.pgmTransition?.source, source, transitionType, transitionDurationMs);
+    await this.obsHeadlessService.switchSource(source, transitionType, transitionDurationMs);
+    this.pgmTransition = transition;
+    this.pgmTransitionChanged.emit(this.pgmTransition);
   }
 
   public async createLiveSource(url: string | undefined): Promise<void> {

@@ -349,6 +349,12 @@ export class SceneSetAsCurrentRequest extends jspb.Message {
     getSceneId(): string;
     setSceneId(value: string): SceneSetAsCurrentRequest;
 
+    getTransitionType(): string;
+    setTransitionType(value: string): SceneSetAsCurrentRequest;
+
+    getTransitionDurationMs(): number;
+    setTransitionDurationMs(value: number): SceneSetAsCurrentRequest;
+
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): SceneSetAsCurrentRequest.AsObject;
@@ -364,6 +370,8 @@ export namespace SceneSetAsCurrentRequest {
     export type AsObject = {
         showId: string,
         sceneId: string,
+        transitionType: string,
+        transitionDurationMs: number,
     }
 }
 
@@ -860,10 +868,10 @@ export namespace SourceAddResponse {
 
 export class SourceDuplicateResponse extends jspb.Message { 
 
-    hasSource(): boolean;
-    clearSource(): void;
-    getSource(): Source | undefined;
-    setSource(value?: Source): SourceDuplicateResponse;
+    hasSourcer(): boolean;
+    clearSourcer(): void;
+    getSourcer(): Source | undefined;
+    setSourcer(value?: Source): SourceDuplicateResponse;
 
 
     serializeBinary(): Uint8Array;
@@ -878,7 +886,7 @@ export class SourceDuplicateResponse extends jspb.Message {
 
 export namespace SourceDuplicateResponse {
     export type AsObject = {
-        source?: Source.AsObject,
+        sourcer?: Source.AsObject,
     }
 }
 

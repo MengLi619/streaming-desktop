@@ -3040,7 +3040,9 @@ proto.proto.SceneSetAsCurrentRequest.prototype.toObject = function(opt_includeIn
 proto.proto.SceneSetAsCurrentRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     showId: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    sceneId: jspb.Message.getFieldWithDefault(msg, 2, "")
+    sceneId: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    transitionType: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    transitionDurationMs: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -3085,6 +3087,14 @@ proto.proto.SceneSetAsCurrentRequest.deserializeBinaryFromReader = function(msg,
       var value = /** @type {string} */ (reader.readString());
       msg.setSceneId(value);
       break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setTransitionType(value);
+      break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setTransitionDurationMs(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -3128,6 +3138,20 @@ proto.proto.SceneSetAsCurrentRequest.serializeBinaryToWriter = function(message,
       f
     );
   }
+  f = message.getTransitionType();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getTransitionDurationMs();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
+      f
+    );
+  }
 };
 
 
@@ -3164,6 +3188,42 @@ proto.proto.SceneSetAsCurrentRequest.prototype.getSceneId = function() {
  */
 proto.proto.SceneSetAsCurrentRequest.prototype.setSceneId = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string transition_type = 3;
+ * @return {string}
+ */
+proto.proto.SceneSetAsCurrentRequest.prototype.getTransitionType = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.proto.SceneSetAsCurrentRequest} returns this
+ */
+proto.proto.SceneSetAsCurrentRequest.prototype.setTransitionType = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional int32 transition_duration_ms = 4;
+ * @return {number}
+ */
+proto.proto.SceneSetAsCurrentRequest.prototype.getTransitionDurationMs = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.proto.SceneSetAsCurrentRequest} returns this
+ */
+proto.proto.SceneSetAsCurrentRequest.prototype.setTransitionDurationMs = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
@@ -6341,7 +6401,7 @@ proto.proto.SourceDuplicateResponse.prototype.toObject = function(opt_includeIns
  */
 proto.proto.SourceDuplicateResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    source: (f = msg.getSource()) && proto.proto.Source.toObject(includeInstance, f)
+    sourcer: (f = msg.getSourcer()) && proto.proto.Source.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -6381,7 +6441,7 @@ proto.proto.SourceDuplicateResponse.deserializeBinaryFromReader = function(msg, 
     case 1:
       var value = new proto.proto.Source;
       reader.readMessage(value,proto.proto.Source.deserializeBinaryFromReader);
-      msg.setSource(value);
+      msg.setSourcer(value);
       break;
     default:
       reader.skipField();
@@ -6412,7 +6472,7 @@ proto.proto.SourceDuplicateResponse.prototype.serializeBinary = function() {
  */
 proto.proto.SourceDuplicateResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getSource();
+  f = message.getSourcer();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -6424,10 +6484,10 @@ proto.proto.SourceDuplicateResponse.serializeBinaryToWriter = function(message, 
 
 
 /**
- * optional Source source = 1;
+ * optional Source sourcer = 1;
  * @return {?proto.proto.Source}
  */
-proto.proto.SourceDuplicateResponse.prototype.getSource = function() {
+proto.proto.SourceDuplicateResponse.prototype.getSourcer = function() {
   return /** @type{?proto.proto.Source} */ (
     jspb.Message.getWrapperField(this, proto.proto.Source, 1));
 };
@@ -6437,7 +6497,7 @@ proto.proto.SourceDuplicateResponse.prototype.getSource = function() {
  * @param {?proto.proto.Source|undefined} value
  * @return {!proto.proto.SourceDuplicateResponse} returns this
 */
-proto.proto.SourceDuplicateResponse.prototype.setSource = function(value) {
+proto.proto.SourceDuplicateResponse.prototype.setSourcer = function(value) {
   return jspb.Message.setWrapperField(this, 1, value);
 };
 
@@ -6446,8 +6506,8 @@ proto.proto.SourceDuplicateResponse.prototype.setSource = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.proto.SourceDuplicateResponse} returns this
  */
-proto.proto.SourceDuplicateResponse.prototype.clearSource = function() {
-  return this.setSource(undefined);
+proto.proto.SourceDuplicateResponse.prototype.clearSourcer = function() {
+  return this.setSourcer(undefined);
 };
 
 
@@ -6455,7 +6515,7 @@ proto.proto.SourceDuplicateResponse.prototype.clearSource = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.proto.SourceDuplicateResponse.prototype.hasSource = function() {
+proto.proto.SourceDuplicateResponse.prototype.hasSourcer = function() {
   return jspb.Message.getField(this, 1) != null;
 };
 

@@ -1,6 +1,6 @@
 import './Sources.scss';
 import React from 'react';
-import { Source } from '../../../types/obs';
+import { Source, Transition } from '../../../types/obs';
 import { Container } from 'typedi';
 import { sequence } from '../../../common/util';
 import { SourceView } from './SourceView';
@@ -9,7 +9,7 @@ import { SourceService } from '../../../service/sourceService';
 type SourcesState = {
   sources: Source[];
   pvwSource?: Source;
-  pgmSource?: Source;
+  pgmTransition?: Transition;
 };
 
 const MAX_SOURCE_COUNT = 12;
@@ -22,7 +22,7 @@ export class Sources extends React.Component<{}, SourcesState> {
     this.state = {
       sources: this.sourceService.sources,
       pvwSource: this.sourceService.pvwSource,
-      pgmSource: this.sourceService.pgmSource,
+      pgmTransition: this.sourceService.pgmTransition,
     };
   }
 
@@ -32,16 +32,16 @@ export class Sources extends React.Component<{}, SourcesState> {
         pvwSource: source,
       })
     });
-    this.sourceService.pgmSourceChanged.on(this, source => {
+    this.sourceService.pgmTransitionChanged.on(this, transition => {
       this.setState({
-        pgmSource: source,
+        pgmTransition: transition,
       })
     });
   }
 
   public componentWillUnmount() {
     this.sourceService.pvwSourceChanged.off(this);
-    this.sourceService.pgmSourceChanged.off(this);
+    this.sourceService.pgmTransitionChanged.off(this);
   }
 
   public render() {
@@ -57,7 +57,7 @@ export class Sources extends React.Component<{}, SourcesState> {
                   number={number}
                   source={source}
                   isPvw={!!source && this.state.pvwSource?.id === source?.id}
-                  isPgm={!!source && this.state.pgmSource?.id === source?.id}
+                  isPgm={!!source && this.state.pgmTransition?.source?.id === source?.id}
                 >
                 </SourceView>
               );

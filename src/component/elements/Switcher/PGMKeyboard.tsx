@@ -3,7 +3,7 @@ import React from 'react';
 import { KeyView } from './KeyView';
 import { Container } from 'typedi';
 import { SourceService } from '../../../service/sourceService';
-import { Source } from '../../../types/obs';
+import { Transition } from '../../../types/obs';
 
 const keyNames = [
   '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -11,7 +11,7 @@ const keyNames = [
 ];
 
 export class PGMKeyboardState {
-  pgmSource?: Source;
+  transition?: Transition;
 }
 
 export class PGMSKeyboard extends React.Component<{}, PGMKeyboardState> {
@@ -20,20 +20,20 @@ export class PGMSKeyboard extends React.Component<{}, PGMKeyboardState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      pgmSource: this.sourceService.pgmSource,
+      transition: this.sourceService.pgmTransition,
     };
   }
 
   public componentDidMount() {
-    this.sourceService.pgmSourceChanged.on(this, source => {
+    this.sourceService.pgmTransitionChanged.on(this, transition => {
       this.setState({
-        pgmSource: source,
+        transition: transition,
       });
     });
   }
 
   public componentWillUnmount() {
-    this.sourceService.pgmSourceChanged.off(this);
+    this.sourceService.pgmTransitionChanged.off(this);
   }
 
   public render() {
@@ -49,8 +49,8 @@ export class PGMSKeyboard extends React.Component<{}, PGMKeyboardState> {
                   key={name}
                   name={name}
                   isPreview={false}
-                  isProgram={!!source && this.state.pgmSource?.id === source.id}
-                  onButtonClicked={() => this.onKeyClicked(index)}
+                  isProgram={!!source && this.state.transition?.source?.id === source.id}
+                  onButtonClicked={() => {}}
                 />
               );
             })
@@ -58,12 +58,5 @@ export class PGMSKeyboard extends React.Component<{}, PGMKeyboardState> {
         </div>
       </div>
     );
-  }
-
-  private onKeyClicked(index: number) {
-    const source = this.sourceService.sources[index];
-    if (source) {
-      this.sourceService.take(source);
-    }
   }
 }

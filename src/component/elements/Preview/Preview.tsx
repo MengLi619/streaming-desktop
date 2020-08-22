@@ -29,7 +29,7 @@ export class Preview extends React.Component<{}, PreviewState> {
   }
 
   public componentWillUnmount() {
-    this.sourceService.pgmSourceChanged.off(this);
+    this.sourceService.pvwSourceChanged.off(this);
   }
 
   public render() {

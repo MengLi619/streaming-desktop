@@ -2,7 +2,7 @@ import { Service } from 'typedi';
 import * as obs from '../obs-api';
 import * as electron from "electron";
 import { remote } from "electron";
-import { TransitionType } from '../types/obs';
+import { Source, Transition, TransitionType } from '../types/obs';
 import * as uuid from 'uuid';
 import path from "path";
 
@@ -20,6 +20,7 @@ const DEFAULT_SOURCE_SETTINGS = {
 export class ObsService {
   private globalTransition?: obs.ITransition;
   private globalScene?: obs.IScene;
+  private readonly transitions: Map<TransitionType, obs.ITransition> = new Map<TransitionType, obs.ITransition>();
 
   public async initialize() {
     // Host a new OBS server instance
@@ -87,5 +88,25 @@ export class ObsService {
 
   public async createOBSIOSurface(name: string): Promise<number> {
     return obs.NodeObs.OBS_content_createIOSurface(name);
+  }
+
+  public async switchSource(from: Source | undefined, to: Source, transitionType: TransitionType, transitionDurationMs: number): Promise<Transition> {
+    let obsTransition = this.transitions.get(transitionType);
+    if (!obsTransition) {
+      const transitionId = uuid.v4();
+      obsTransition = obs.TransitionFactory.create(transitionType, transitionId);
+      this.transitions.set(transitionType, obsTransition);
+    }
+    if (from) {
+      const fromObsScene = obs.SceneFactory.fromName(from.id);
+      obsTransition.set(fromObsScene);
+    }
+    const toObsScene = obs.SceneFactory.fromName(to.id);
+    obsTransition.start(transitionDurationMs, toObsScene);
+    return {
+      id: obsTransition.name,
+      type: transitionType,
+      source: to,
+    };
   }
 }

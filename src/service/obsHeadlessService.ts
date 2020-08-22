@@ -5,7 +5,7 @@ import { SceneAddRequest, SceneAddResponse, SceneRemoveRequest, SceneSetAsCurren
 import { OBS_SERVER_URL, OBS_SHOW_NAME } from '../common/constant';
 import { credentials } from "grpc";
 import { promisify } from "util";
-import { Source } from '../types/obs';
+import { Source, TransitionType } from '../types/obs';
 
 @Service()
 export class ObsHeadlessService {
@@ -48,7 +48,15 @@ export class ObsHeadlessService {
       request.setShowName(OBS_SHOW_NAME);
       this.show = (await this.showCreate(request)).getShow() as Show;
     }
-    console.log(`show = ${JSON.stringify(this.show)}`);
+
+    // start show
+    try {
+      await this.studioStart(new Empty());
+    } catch (error) {
+      console.log(`Failed to start obs headless`);
+    }
+
+    // Get current sources
     const sources: Source[] = [];
     for (const scene of this.show.getScenesList()) {
       for (const source of scene.getSourcesList()) {
@@ -93,20 +101,12 @@ export class ObsHeadlessService {
     await this.sceneRemove(request);
   }
 
-  public async switchSource(source: Source) {
-    // try to start studio
-    try {
-      await this.studioStart(new Empty());
-    } catch {
-    }
-
-    // switch screen
-    try {
-      const request = new SceneSetAsCurrentRequest();
-      request.setShowId(this.show?.getId() as string);
-      request.setSceneId(source.id);
-      await this.sceneSetAsCurrent(request);
-    } catch {
-    }
+  public async switchSource(source: Source, transitionType: string, transitionDurationMs: number) {
+    const request = new SceneSetAsCurrentRequest();
+    request.setShowId(this.show?.getId() as string);
+    request.setSceneId(source.id);
+    request.setTransitionType(transitionType);
+    request.setTransitionDurationMs(transitionDurationMs);
+    await this.sceneSetAsCurrent(request);
   }
 }

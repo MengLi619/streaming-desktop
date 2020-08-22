@@ -78,7 +78,6 @@ export class Display extends React.Component<DisplayProps> {
         rect.y !== this.currentPosition.y ||
         rect.width !== this.currentPosition.width ||
         rect.height !== this.currentPosition.height) {
-        console.log(`display rect = ${JSON.stringify(rect)}, element rect = ${JSON.stringify(element.getBoundingClientRect)}`);
         await this.resize(rect.width, rect.height);
         await this.move(rect.x, rect.y);
       }
