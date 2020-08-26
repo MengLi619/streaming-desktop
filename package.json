@@ -12,13 +12,13 @@
     "postinstall": "node ./scripts/install-native-deps.js",
     "copy-native-deps": "sh ./scripts/copy-native-deps.sh",
     "build-grpc": "node src/build-grpc.js",
-    "build-main": "cp -r src/obs-api src/obs-headless build && tsc -p src/main",
-    "local": "env-cmd -f env/local.env concurrently \"npm run build-main\" \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
-    "server": "env-cmd -f env/server.env concurrently \"npm run build-main\" \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "build-main": "tsc -p src/main && cp -r src/obs-api src/obs-headless build/",
+    "local": "npm run build-main && env-cmd -f env/local.env concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "server": "npm run build-main && env-cmd -f env/server.env concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "build:prod": "npm run build",
     "build-main:prod": "npm run build-main",
     "preelectron-pack": "rm -rf build && npm run build:prod && npm run build-main:prod",
-    "electron-pack": "rm -rf dist && electron-builder build -mw"
+    "electron-pack": "rm -rf dist && electron-builder build -w"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.14.0",
