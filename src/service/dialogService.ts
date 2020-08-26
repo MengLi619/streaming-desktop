@@ -12,6 +12,7 @@ export type ShowDialogRequest = {
   sessionId: SessionId;
   component: DialogComponent;
   title: string;
+  defaultValue: any;
 };
 
 @Service()
@@ -21,12 +22,12 @@ export class DialogService {
 
   constructor() {
     if (isDialogWindow()) {
-      ipcRenderer.on('showDialog', (event, sessionId: SessionId, options: DialogOptions) => {
-        console.log(`onShowDialog = ${JSON.stringify(options)}`);
+      ipcRenderer.on('showDialog', (event, sessionId: SessionId, options: DialogOptions, defaultValue: any) => {
         this.showDialogRequested.emit({
           sessionId: sessionId,
           component: options.component,
           title: options.title,
+          defaultValue: defaultValue,
         });
         const dialogWindow = remote.getCurrentWindow();
         dialogWindow.setSize(options.width, options.height);
@@ -46,12 +47,12 @@ export class DialogService {
     }
   }
 
-  public showDialog<T>(options: DialogOptions): Promise<T | undefined> {
-    if (!isMainWindow()) {
+  public showDialog<T>(options: DialogOptions, defaultValue?: any): Promise<T | undefined> {
+    if (isDialogWindow()) {
       throw new Error(`Only main window can request show dialog.`);
     }
     const sessionId: SessionId = uuid.v4();
-    ipcRenderer.send('showDialog', sessionId, options);
+    ipcRenderer.send('showDialog', sessionId, options, defaultValue);
     return new Promise(resolve => {
       this.resolvers.set(sessionId, resolve);
     });

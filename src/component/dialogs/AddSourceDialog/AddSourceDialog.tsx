@@ -18,7 +18,10 @@ export class AddSourceDialog extends React.Component<AddSourceDialogProps, AddSo
 
   constructor(props: AddSourceDialogProps) {
     super(props);
-    this.state = {};
+    this.state = {
+      name: this.props.defaultValue?.name,
+      url: this.props.defaultValue?.url,
+    };
   }
 
   public render() {

@@ -3,9 +3,32 @@
 .Sources {
   flex: 1;
 
-  .sources-list {
+  .SourceView-list {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+
+    .SourceView-item {
+      display: flex;
+      flex-direction: row;
+      border: 1px solid var(--border);
+      background: var(--background);
+
+      &.isPreview {
+        border-color: var(--preview);
+      }
+
+      &.isProgram {
+        border-color: var(--program);
+      }
+
+      &.rows2 {
+        width: calc(16.67% - 2.5px);
+      }
+
+      &.rows3 {
+        width: calc(25% - 2.5px);
+      }
+    }
   }
 }

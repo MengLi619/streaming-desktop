@@ -1,6 +1,7 @@
 export type DialogProps<T> = {
   onModalCancel: () => void;
   onModalDone: (result: T) => void;
+  defaultValue: any;
 };
 
 export type DialogComponent =

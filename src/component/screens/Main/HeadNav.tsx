@@ -42,8 +42,8 @@ export class HeadNav extends React.Component {
       width: 400,
       height: 300,
     });
-    if (setting) {
-      await this.sourceService.createLiveSource(setting.url);
+    if (setting && setting.url) {
+      await this.sourceService.updateLiveUrl(setting.url);
     }
   }
 }

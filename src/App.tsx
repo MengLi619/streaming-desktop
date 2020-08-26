@@ -1,13 +1,11 @@
 import React from 'react';
-import { LayoutProvider } from './component/context/LayoutProvider';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Main } from './component/screens/Main/Main';
 import { Studio } from './component/screens/Studio/Studio';
-import { LayoutEditor } from './component/screens/LayoutEditor/LayoutEditor';
 import { Container } from 'typedi';
 import { SourceService } from './service/sourceService';
 import { DialogWindow } from './component/dialogs/DialogWindow/DialogWindow';
-import { isDialogWindow, isMainWindow } from './common/util';
+import { isDialogWindow, isExternalWindow } from './common/util';
+import { ExternalWindow } from './component/screens/ExternalWindow/ExternalWindow';
 
 type AppState = {
   initialized: boolean;
@@ -24,9 +22,7 @@ export class App extends React.Component<{}, AppState> {
   }
 
   async componentDidMount() {
-    if (isMainWindow()) {
-      await this.sourceService.initialize();
-    }
+    this.sourceService.initialize();
     this.setState({
       initialized: true,
     });
@@ -34,26 +30,18 @@ export class App extends React.Component<{}, AppState> {
 
   public render() {
     if (!this.state.initialized) {
-      return null;
+      return <></>;
     }
     if (isDialogWindow()) {
       return <DialogWindow />;
+    } else if (isExternalWindow()) {
+      return <ExternalWindow />
+    } else {
+      return (
+        <Main>
+          <Studio />
+        </Main>
+      );
     }
-    return (
-      <LayoutProvider>
-        <BrowserRouter>
-          <Switch>
-            <Route path='*'>
-              <Main>
-                <Switch>
-                  <Route exact path='/' component={Studio}/>
-                  <Route exact path='/layoutEditor' component={LayoutEditor}/>
-                </Switch>
-              </Main>
-            </Route>
-          </Switch>
-        </BrowserRouter>
-      </LayoutProvider>
-    );
   }
 }

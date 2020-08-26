@@ -1,19 +1,9 @@
 @import '../../../styles/index';
 
 .SourceView {
-  width: calc(16.67% - 2.5px);
   display: flex;
+  flex: 1;
   flex-direction: column;
-  border: 1px solid var(--border);
-  background: var(--background);
-
-  &.isPvm {
-    border-color: var(--preview);
-  }
-
-  &.isPgm {
-    border-color: var(--program);
-  }
 
   .display-container {
     flex: 1;

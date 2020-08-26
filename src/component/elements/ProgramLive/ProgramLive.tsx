@@ -3,9 +3,10 @@ import React from 'react';
 import { Display } from '../../shared/Display/Display';
 import { Container } from 'typedi';
 import { SourceService } from '../../../service/sourceService';
+import { Source } from '../../../types/obs';
 
 type ProgramLiveState = {
-  sourceId?: string;
+  liveSource?: Source;
 };
 
 export class ProgramLive extends React.Component<{}, ProgramLiveState> {
@@ -18,17 +19,17 @@ export class ProgramLive extends React.Component<{}, ProgramLiveState> {
 
   public componentDidMount() {
     this.setState({
-      sourceId: this.sourceService.liveSource?.id,
+      liveSource: this.sourceService.liveSource,
     });
-    this.sourceService.liveSourceChanged.on(this, source => {
+    this.sourceService.liveChanged.on(this, source => {
       this.setState({
-        sourceId: source?.id,
+        liveSource: source,
       });
     });
   }
 
   public componentWillUnmount() {
-    this.sourceService.liveSourceChanged.off(this);
+    this.sourceService.liveChanged.off(this);
   }
 
   public render() {
@@ -37,10 +38,10 @@ export class ProgramLive extends React.Component<{}, ProgramLiveState> {
         <div className='display-container'>
           <div className='content'>
             {
-              this.state.sourceId &&
+              this.state.liveSource &&
               <Display
-                key={this.state.sourceId}
-                sourceId={this.state.sourceId}
+                key={this.state.liveSource.id}
+                sourceId={this.state.liveSource.id}
               />
             }
           </div>

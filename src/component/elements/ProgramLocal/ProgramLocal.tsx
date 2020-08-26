@@ -6,7 +6,7 @@ import { SourceService } from '../../../service/sourceService';
 import { Transition } from '../../../types/obs';
 
 type ProgramLocalState = {
-  transition?: Transition;
+  programTransition?: Transition;
 };
 
 export class ProgramLocal extends React.Component<{}, ProgramLocalState> {
@@ -19,29 +19,29 @@ export class ProgramLocal extends React.Component<{}, ProgramLocalState> {
 
   public componentDidMount() {
     this.setState({
-      transition: this.sourceService.pgmTransition,
+      programTransition: this.sourceService.programTransition,
     });
-    this.sourceService.pgmTransitionChanged.on(this, transition => {
+    this.sourceService.programChanged.on(this, transition => {
       this.setState({
-        transition: transition,
+        programTransition: transition,
       })
     });
   }
 
   public componentWillUnmount() {
-    this.sourceService.pgmTransitionChanged.off(this);
+    this.sourceService.programChanged.off(this);
   }
 
   public render() {
     return (
-      <div className={`ProgramLocal ${this.state.transition ? 'isProgram': ''}`}>
+      <div className={`ProgramLocal ${this.state.programTransition ? 'isProgram': ''}`}>
         <div className='display-container'>
           <div className='content'>
             {
-              this.state.transition &&
+              this.state.programTransition &&
               <Display
-                key={this.state.transition.id}
-                sourceId={this.state.transition.id}
+                key={this.state.programTransition.id}
+                sourceId={this.state.programTransition.id}
               />
             }
           </div>

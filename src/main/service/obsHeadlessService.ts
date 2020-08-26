@@ -1,11 +1,11 @@
 import { Service } from 'typedi';
-import { StudioClient } from '../obs-headless/studio_grpc_pb';
+import { StudioClient } from '../../obs-headless/studio_grpc_pb';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
-import { SceneAddRequest, SceneAddResponse, SceneRemoveRequest, SceneSetAsCurrentRequest, SceneSetAsCurrentResponse, Show, ShowCreateRequest, ShowCreateResponse, SourceAddRequest, SourceAddResponse, StudioGetResponse } from '../obs-headless/studio_pb';
-import { OBS_SERVER_URL, OBS_SHOW_NAME } from '../common/constant';
-import { credentials } from "grpc";
-import { promisify } from "util";
-import { Source, TransitionType } from '../types/obs';
+import { SceneAddRequest, SceneAddResponse, SceneRemoveRequest, SceneSetAsCurrentRequest, SceneSetAsCurrentResponse, Show, ShowCreateRequest, ShowCreateResponse, SourceAddRequest, SourceAddResponse, StudioGetResponse } from '../../obs-headless/studio_pb';
+import { OBS_SERVER_URL, OBS_SHOW_NAME } from '../../common/constant';
+import { credentials } from 'grpc';
+import { promisify } from 'util';
+import { Source } from '../../types/obs';
 
 @Service()
 export class ObsHeadlessService {
@@ -70,7 +70,7 @@ export class ObsHeadlessService {
     return sources;
   }
 
-  public async addSource(name: string, url: string): Promise<Source> {
+  public async addSource(name: string, url: string): Promise<string> {
     // Add scene
     const sceneAddRequest = new SceneAddRequest();
     sceneAddRequest.setShowId(this.show?.getId() as string);
@@ -87,11 +87,7 @@ export class ObsHeadlessService {
     await this.sourceAdd(sourceAddRequest);
 
     // Return created source
-    return {
-      id: sceneId,
-      name: name,
-      url: url,
-    };
+    return sceneId;
   };
 
   public async removeSource(source: Source) {

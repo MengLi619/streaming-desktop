@@ -16,6 +16,7 @@ type DialogWindowState = {
   sessionId?: string;
   title?: string
   component?: DialogComponent;
+  defaultValue?: any;
 };
 
 export class DialogWindow extends React.Component<{}, DialogWindowState> {
@@ -32,6 +33,7 @@ export class DialogWindow extends React.Component<{}, DialogWindowState> {
         sessionId: request.sessionId,
         title: request.title,
         component: request.component,
+        defaultValue: request.defaultValue,
       });
     });
   }
@@ -56,6 +58,7 @@ export class DialogWindow extends React.Component<{}, DialogWindowState> {
           <DialogComponent
             onModalCancel={() => this.close(undefined)}
             onModalDone={result => this.close(result)}
+            defaultValue={this.state.defaultValue}
           />
         }
       </div>

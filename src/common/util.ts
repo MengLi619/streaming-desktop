@@ -1,13 +1,23 @@
 import { remote } from 'electron';
 
+export function isMainWindow() {
+  const url = new URL(window.location.href);
+  return url.searchParams.get('window') === 'main';
+}
+
 export function isDialogWindow() {
   const url = new URL(window.location.href);
   return url.searchParams.get('window') === 'dialog';
 }
 
-export function isMainWindow() {
+export function isExternalWindow() {
   const url = new URL(window.location.href);
-  return url.searchParams.get('window') === 'main';
+  return url.searchParams.get('window') === 'external';
+}
+
+export function isWorkerWindow() {
+  const url = new URL(window.location.href);
+  return url.searchParams.get('window') === 'worker';
 }
 
 export enum OS {

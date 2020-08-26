@@ -1,81 +1,63 @@
-import { Container, Service } from 'typedi';
+import { Service } from 'typedi';
 import { Source, Transition, TransitionType } from '../types/obs';
 import { SimpleEvent } from '../common/event';
-import * as uuid from 'uuid';
-import { ObsService } from './obsService';
-import { ObsHeadlessService } from './obsHeadlessService';
+import { ipcRenderer } from 'electron';
 
 @Service()
 export class SourceService {
-  private readonly obsService: ObsService = Container.get(ObsService);
-  private readonly obsHeadlessService: ObsHeadlessService = Container.get(ObsHeadlessService);
+  public sourcesChanged = new SimpleEvent<Record<number, Source>>();
+  public previewChanged = new SimpleEvent<Source>();
+  public programChanged = new SimpleEvent<Transition>();
+  public liveChanged = new SimpleEvent<Source | undefined>();
 
-  public sources: Source[] = [];
-  public pvwSource?: Source;
-  public pgmTransition?: Transition;
-  public liveSource?: Source;
-
-  public sourceAdded = new SimpleEvent<Source>();
-  public pvwSourceChanged = new SimpleEvent<Source>();
-  public pgmTransitionChanged = new SimpleEvent<Transition>();
-  public liveSourceChanged = new SimpleEvent<Source | undefined>();
-
-  public async initialize() {
-    // Initialize local obs
-    await this.obsService.initialize();
-
-    // Initialize sources
-    this.sources = await this.obsHeadlessService.initialize();
-    for (const source of this.sources) {
-      await this.obsService.createSource(source.id, source.url);
-    }
+  public initialize(): void {
+    ipcRenderer.on('sourcesChanged', (event, sources: Record<number, Source>) => {
+      this.sourcesChanged.emit(sources);
+    });
+    ipcRenderer.on('previewChanged', (event, source: Source) => {
+      this.previewChanged.emit(source);
+    });
+    ipcRenderer.on('programChanged', (event, transition: Transition) => {
+      this.programChanged.emit(transition);
+    });
+    ipcRenderer.on('liveChanged', (event, source: Source) => {
+      this.liveChanged.emit(source);
+    });
   }
 
-  public async addSource(name: string, url: string): Promise<Source> {
-    const source = await this.obsHeadlessService.addSource(name, url);
-    await this.obsService.createSource(source.id, source.url);
-    this.sources.push(source);
-    this.sourceAdded.emit(source);
-    return source;
+  public get sources(): Record<number, Source> {
+    return ipcRenderer.sendSync('getSources');
   }
 
-  public async updateSource(id: string, name: string, url: string): Promise<Source> {
-    const source = this.sources.find(s => s.id === id) as Source;
-    await this.obsHeadlessService.removeSource(source);
-    await this.obsService.removeSource(source.id);
-    const newSource = await this.obsHeadlessService.addSource(name, url);
-    source.id = newSource.id;
-    source.name = name;
-    source.url = url;
-    return source;
+  public get previewSource(): Source {
+    return ipcRenderer.sendSync('getPreviewSource');
   }
 
-  public setPvwSource(source: Source): void {
-    this.pvwSource = source;
-    this.pvwSourceChanged.emit(this.pvwSource);
+  public get programTransition(): Transition {
+    return ipcRenderer.sendSync('getProgramTransition');
   }
 
-  public async take(source: Source, transitionType: TransitionType, transitionDurationMs: number): Promise<void> {
-    const transition = await this.obsService.switchSource(this.pgmTransition?.source, source, transitionType, transitionDurationMs);
-    await this.obsHeadlessService.switchSource(source, transitionType, transitionDurationMs);
-    this.pgmTransition = transition;
-    this.pgmTransitionChanged.emit(this.pgmTransition);
+  public get liveSource(): Source {
+    return ipcRenderer.sendSync('getLiveSource');
   }
 
-  public async createLiveSource(url: string | undefined): Promise<void> {
-    if (url === this.liveSource?.url) {
-      return;
-    }
-    if (this.liveSource) {
-      await this.obsService.removeSource(this.liveSource.id);
-      this.liveSource = undefined;
-    }
-    if (url) {
-      const sourceId = `output_${uuid.v4()}`;
-      const sourceName = 'Output';
-      this.liveSource = { id: sourceId, name: sourceName, url: url };
-      await this.obsService.createSource(sourceId, url);
-    }
-    this.liveSourceChanged.emit(this.liveSource);
+  public updateSource(index: number, name: string, url: string): void {
+    ipcRenderer.send('updateSource', index, name, url);
+  }
+
+  public removeSource(index: number): void {
+    ipcRenderer.send('removeSource', index);
+  }
+
+  public preview(source: Source): void {
+    ipcRenderer.send('preview', source);
+  }
+
+  public take(source: Source, transitionType: TransitionType, transitionDurationMs: number): void {
+    ipcRenderer.send('take', source, transitionType, transitionDurationMs);
+  }
+
+  public updateLiveUrl(url: string): void {
+    ipcRenderer.send('updateLiveUrl', url);
   }
 }

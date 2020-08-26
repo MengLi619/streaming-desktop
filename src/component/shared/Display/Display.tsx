@@ -4,7 +4,7 @@ import React, { RefObject } from 'react';
 import { remote } from "electron";
 import { isMac, getScaleFactor } from '../../../common/util';
 import { Container } from 'typedi';
-import { ObsService } from '../../../service/obsService';
+import { DisplayService } from '../../../service/displayService';
 
 export type Rectangle = {
   x: number;
@@ -26,10 +26,9 @@ if (isMac()) {
 }
 
 const DISPLAY_ELEMENT_POLLING_INTERVAL = 500;
-const FIX_RATIO = 9 / 16;
 
 export class Display extends React.Component<DisplayProps> {
-  private readonly obsService = Container.get(ObsService);
+  private readonly displayService = Container.get(DisplayService);
   private readonly electronWindowId: number;
   private readonly name: string;
   private currentPosition: Rectangle = { x: 0, y: 0, width: 0, height: 0 };
@@ -43,18 +42,18 @@ export class Display extends React.Component<DisplayProps> {
     this.electronWindowId = remote.getCurrentWindow().id;
   }
 
-  async componentDidMount() {
-    await this.obsService.createOBSDisplay(this.electronWindowId, this.name, this.props.sourceId);
+  public componentDidMount() {
+    this.displayService.createOBSDisplay(this.electronWindowId, this.name, this.props.sourceId);
     if (this.ref.current) {
       this.trackElement(this.ref.current);
     }
   }
 
-  async componentWillUnmount() {
+  public componentWillUnmount() {
     if (this.trackingInterval) {
       clearInterval(this.trackingInterval);
     }
-    await this.obsService.destroyOBSDisplay(this.name)
+    this.displayService.destroyOBSDisplay(this.name)
     if (isMac()) {
       nwr.destroyWindow(this.name);
       nwr.destroyIOSurface(this.name);
@@ -71,22 +70,22 @@ export class Display extends React.Component<DisplayProps> {
     if (this.trackingInterval) {
       clearInterval(this.trackingInterval);
     }
-    const trackingFun = async () => {
+    const trackingFun = () => {
       const rect = this.getCurrentPosition(element.getBoundingClientRect());
       if (
         rect.x !== this.currentPosition.x ||
         rect.y !== this.currentPosition.y ||
         rect.width !== this.currentPosition.width ||
         rect.height !== this.currentPosition.height) {
-        await this.resize(rect.width, rect.height);
-        await this.move(rect.x, rect.y);
+        this.resize(rect.width, rect.height);
+        this.move(rect.x, rect.y);
       }
     };
     trackingFun();
     this.trackingInterval = window.setInterval(trackingFun, DISPLAY_ELEMENT_POLLING_INTERVAL);
   }
 
-  getCurrentPosition(rect: ClientRect): Rectangle {
+  private getCurrentPosition(rect: ClientRect): Rectangle {
     const scaleFactor = isMac() ? 1 : getScaleFactor();
 
     // Windows: Top-left origin
@@ -102,20 +101,20 @@ export class Display extends React.Component<DisplayProps> {
     };
   }
 
-  async move(x: number, y: number) {
+  private move(x: number, y: number) {
     this.currentPosition.x = x;
     this.currentPosition.y = y;
     if (isMac()) {
       nwr.moveWindow(this.name, x, y);
     } else {
-      await this.obsService.moveOBSDisplay(this.name, x, y);
+      this.displayService.moveOBSDisplay(this.name, x, y);
     }
   }
 
-  async resize(width: number, height: number) {
+  private resize(width: number, height: number) {
     this.currentPosition.width = width;
     this.currentPosition.height = height;
-    await this.obsService.resizeOBSDisplay(this.name, width, height);
+    this.displayService.resizeOBSDisplay(this.name, width, height);
 
     // On mac, resizing the display is not enough, we also have to
     // recreate the window and IOSurface for the new size
@@ -125,7 +124,7 @@ export class Display extends React.Component<DisplayProps> {
         nwr.destroyIOSurface(this.name);
       }
 
-      const surface = await this.obsService.createOBSIOSurface(this.name);
+      const surface = this.displayService.createOBSIOSurface(this.name);
       nwr.createWindow(
         this.name,
         remote.BrowserWindow.fromId(this.electronWindowId).getNativeWindowHandle(),

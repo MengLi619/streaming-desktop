@@ -6,7 +6,7 @@ import { Container } from 'typedi';
 import { SourceService } from '../../../service/sourceService';
 
 type PreviewState = {
-  source?: Source;
+  previewSource?: Source;
 };
 
 export class Preview extends React.Component<{}, PreviewState> {
@@ -14,34 +14,33 @@ export class Preview extends React.Component<{}, PreviewState> {
 
   constructor(props: {}) {
     super(props);
-    this.state = {};
+    this.state = {
+      previewSource: this.sourceService.previewSource,
+    };
   }
 
   public componentDidMount() {
-    this.setState({
-      source: this.sourceService.pvwSource,
-    });
-    this.sourceService.pvwSourceChanged.on(this, source => {
+    this.sourceService.previewChanged.on(this, source => {
       this.setState({
-        source: source,
+        previewSource: source,
       })
     });
   }
 
   public componentWillUnmount() {
-    this.sourceService.pvwSourceChanged.off(this);
+    this.sourceService.previewChanged.off(this);
   }
 
   public render() {
     return (
-      <div className={`Preview ${this.state.source ? 'isPreview': ''}`}>
+      <div className={`Preview ${this.state.previewSource ? 'isPreview': ''}`}>
         <div className='display-container'>
           <div className='content'>
             {
-              this.state.source &&
+              this.state.previewSource &&
               <Display
-                key={this.state.source.id}
-                sourceId={this.state.source.id}
+                key={this.state.previewSource.id}
+                sourceId={this.state.previewSource.id}
               />
             }
           </div>

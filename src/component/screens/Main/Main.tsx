@@ -10,6 +10,7 @@ export class Main extends React.Component {
       <div className="main night-theme">
         <HeadNav />
         <div className='main-contents main-contents--right'>
+          <SideNav />
           <div className="main-middle" ref="mainMiddle">
             {this.props.children}
           </div>

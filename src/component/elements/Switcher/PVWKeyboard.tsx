@@ -11,8 +11,8 @@ const keyNames = [
 ];
 
 type PVWKeyboardState = {
-  pvwSource?: Source;
-  pgmSource?: Source;
+  sources: Record<number, Source>;
+  previewSource?: Source;
 }
 
 export class PVWKeyboard extends React.Component<{}, PVWKeyboardState> {
@@ -21,20 +21,26 @@ export class PVWKeyboard extends React.Component<{}, PVWKeyboardState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      pvwSource: this.sourceService.pvwSource,
+      sources: this.sourceService.sources,
+      previewSource: this.sourceService.previewSource,
     };
   }
 
   public componentDidMount() {
-    this.sourceService.pvwSourceChanged.on(this, source => {
+    this.sourceService.sourcesChanged.on(this, sources => {
       this.setState({
-        pvwSource: source,
+        sources: sources,
+      });
+    });
+    this.sourceService.previewChanged.on(this, source => {
+      this.setState({
+        previewSource: source,
       });
     });
   }
 
   public componentWillUnmount() {
-    this.sourceService.pvwSourceChanged.off(this);
+    this.sourceService.previewChanged.off(this);
   }
 
   public render() {
@@ -44,12 +50,12 @@ export class PVWKeyboard extends React.Component<{}, PVWKeyboardState> {
         <div className='keyboard'>
           {
             keyNames.map((name, index) => {
-              const source = this.sourceService.sources[index];
+              const source = this.state.sources[index];
               return (
                 <KeyView
                   key={name}
                   name={name}
-                  isPreview={!!source && this.state.pvwSource?.id === source.id}
+                  isPreview={!!source && this.state.previewSource?.id === source.id}
                   isProgram={false}
                   onButtonClicked={() => this.onKeyClicked(index)}
                 />
@@ -62,6 +68,9 @@ export class PVWKeyboard extends React.Component<{}, PVWKeyboardState> {
   }
 
   private onKeyClicked(index: number) {
-    this.sourceService.setPvwSource(this.sourceService.sources[index]);
+    const source = this.state.sources[index];
+    if (source) {
+      this.sourceService.preview(source);
+    }
   }
 }

@@ -11,7 +11,7 @@ const keyNames = [
 ];
 
 export class PGMKeyboardState {
-  transition?: Transition;
+  programTransition?: Transition;
 }
 
 export class PGMSKeyboard extends React.Component<{}, PGMKeyboardState> {
@@ -20,20 +20,20 @@ export class PGMSKeyboard extends React.Component<{}, PGMKeyboardState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      transition: this.sourceService.pgmTransition,
+      programTransition: this.sourceService.programTransition,
     };
   }
 
   public componentDidMount() {
-    this.sourceService.pgmTransitionChanged.on(this, transition => {
+    this.sourceService.programChanged.on(this, transition => {
       this.setState({
-        transition: transition,
+        programTransition: transition,
       });
     });
   }
 
   public componentWillUnmount() {
-    this.sourceService.pgmTransitionChanged.off(this);
+    this.sourceService.programChanged.off(this);
   }
 
   public render() {
@@ -49,7 +49,7 @@ export class PGMSKeyboard extends React.Component<{}, PGMKeyboardState> {
                   key={name}
                   name={name}
                   isPreview={false}
-                  isProgram={!!source && this.state.transition?.source?.id === source.id}
+                  isProgram={!!source && this.state.programTransition?.source?.id === source.id}
                   onButtonClicked={() => {}}
                 />
               );
