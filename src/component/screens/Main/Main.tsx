@@ -7,7 +7,7 @@ export class Main extends React.Component {
 
   render() {
     return (
-      <div className="main night-theme">
+      <div className="Main night-theme">
         <HeadNav />
         <div className='main-contents main-contents--right'>
           <SideNav />
