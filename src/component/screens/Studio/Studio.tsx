@@ -12,19 +12,19 @@ export class Studio extends React.Component {
   public render() {
     return (
       <div className='Studio'>
-        <div className='row-1'>
+        <div className='top'>
           <Preview/>
           <ProgramLocal/>
           <ProgramLive/>
         </div>
-        <div className='row-2'>
+        <div className='middle'>
           <Sources />
         </div>
-        <div className='row-3'>
-          <div className='col-3-1'>
+        <div className='bottom'>
+          <div className='Switcher-container'>
             <Switcher />
           </div>
-          <div className='col-3-2'>
+          <div className='PlayList-container'>
             <PlayList />
           </div>
         </div>

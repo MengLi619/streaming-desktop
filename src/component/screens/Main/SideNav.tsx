@@ -1,6 +1,7 @@
 import './SideNav.scss';
 import React from 'react';
 import { ipcRenderer } from 'electron';
+import * as isDev from 'electron-is-dev';
 
 export class SideNav extends React.Component {
 
@@ -9,6 +10,16 @@ export class SideNav extends React.Component {
       <div className='side-nav'>
         <div className='container'>
           <div className='bottom-tools'>
+            {
+              isDev && 
+              <div 
+                title='Dev Tools'
+                className='cell' 
+                onClick={() => this.onDevToolClicked()} 
+              >
+                <i className="icon-developer" />
+              </div>
+            }
             <div
               title='External'
               className='cell'
@@ -29,6 +40,10 @@ export class SideNav extends React.Component {
     );
   }
 
+  private onDevToolClicked() {
+    ipcRenderer.send('openDevTools');
+  }
+  
   private onExternalClicked() {
     ipcRenderer.send('showExternalWindow');
   }

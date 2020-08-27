@@ -103,3 +103,9 @@
     z-index: unset;
   }
 }
+
+.top {
+  .Preview, .ProgramLocal, .ProgramLive {
+    padding: 0 20px;
+  }
+}

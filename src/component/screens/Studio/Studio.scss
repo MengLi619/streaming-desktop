@@ -3,28 +3,29 @@
   display: flex;
   flex-direction: column;
 
-  .row-1 {
+  .top {
+    flex: 1;
     display: flex;
     flex-direction: row;
   }
 
-  .row-2 {
+  .middle {
     display: flex;
     flex-direction: row;
   }
 
-  .row-3 {
+  .bottom {
     display: flex;
     flex-direction: row;
     flex: 1;
   }
 
-  .col-3-1 {
+  .Switcher-container {
     width: 50%;
     display: flex;
   }
 
-  .col-3-2 {
+  .PlayList-container {
     width: 50%;
     display: flex;
   }
