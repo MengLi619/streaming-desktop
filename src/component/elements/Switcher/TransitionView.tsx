@@ -30,7 +30,8 @@ export class TransitionView extends React.Component<{}, TransitionViewState> {
       <div className='TransitionView'>
         <div className='transition-header'>
           <h2>切换特技</h2>
-          <div className='transition-dropdown'>
+        </div>
+        <div className='transition-dropdown'>
             <Dropdown
               value={this.state.transitionType}
               options={transitions}
@@ -42,7 +43,6 @@ export class TransitionView extends React.Component<{}, TransitionViewState> {
             <button className='button--action' onClick={() => this.onTakeClicked(this.state.transitionType)}>TAKE</button>
             <button className='button--action' onClick={() => this.onTakeClicked(TransitionType.Cut)}>CUT</button>
           </div>
-        </div>
       </div>
     );
   }

@@ -74,6 +74,16 @@ ipcMain.on('dialogClosed', (event, sessionId, result) => {
   mainWindow?.webContents.send('dialogClosed', sessionId, result);
 });
 
+// Open DevTools
+ipcMain.on('openDevTools', () => {
+  mainWindow?.webContents.openDevTools();
+});
+
+// Full Screen
+ipcMain.on('fullScreen', () => {
+  mainWindow?.setFullScreen(!mainWindow.isFullScreen());
+});
+
 // External window
 ipcMain.on('showExternalWindow', () => {
   if (externalWindow) {

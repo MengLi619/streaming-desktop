@@ -34,7 +34,7 @@ export class ProgramLive extends React.Component<{}, ProgramLiveState> {
 
   public render() {
     return (
-      <div className='ProgramLocal'>
+      <div className='ProgramLive'>
         <div className='display-container'>
           <div className='content'>
             {
