@@ -64,6 +64,7 @@ export class ObsHeadlessService {
           id: scene.getId(),
           name: source.getName(),
           url: source.getUrl(),
+          previewUrl: source.getUrl(),
         });
       }
     }

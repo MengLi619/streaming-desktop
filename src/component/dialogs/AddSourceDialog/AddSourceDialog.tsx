@@ -5,6 +5,7 @@ import { ModalLayout } from '../../shared/ModalLayout/ModalLayout';
 export type AddSourceResult = {
   name: string;
   url: string;
+  previewUrl: string;
 };
 
 type AddSourceDialogProps = DialogProps<AddSourceResult>;
@@ -12,6 +13,7 @@ type AddSourceDialogProps = DialogProps<AddSourceResult>;
 type AddSourceDialogState = {
   name?: string;
   url?: string;
+  previewUrl?: string;
 };
 
 export class AddSourceDialog extends React.Component<AddSourceDialogProps, AddSourceDialogState> {
@@ -21,6 +23,7 @@ export class AddSourceDialog extends React.Component<AddSourceDialogProps, AddSo
     this.state = {
       name: this.props.defaultValue?.name,
       url: this.props.defaultValue?.url,
+      previewUrl: this.props.defaultValue?.previewUrl,
     };
   }
 
@@ -48,6 +51,13 @@ export class AddSourceDialog extends React.Component<AddSourceDialogProps, AddSo
                 value={this.state.url}
                 onChange={event => this.setState({ url: event.target.value })}
               />
+              <p className="URLSource-label">Preview URL:</p>
+              <input
+                className='fill-width no-outline'
+                type="text"
+                value={this.state.previewUrl}
+                onChange={event => this.setState({ previewUrl: event.target.value })}
+              />
             </div>
           </div>
         </div>
@@ -56,10 +66,11 @@ export class AddSourceDialog extends React.Component<AddSourceDialogProps, AddSo
   }
 
   private onModalDone() {
-    if (this.state.name && this.state.url) {
+    if (this.state.name && this.state.url && this.state.previewUrl) {
       this.props.onModalDone({
         name: this.state.name,
         url: this.state.url,
+        previewUrl: this.state.previewUrl,
       });
     }
   }

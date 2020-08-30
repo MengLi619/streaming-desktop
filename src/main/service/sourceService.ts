@@ -27,7 +27,7 @@ export class SourceService {
       this.sources[index++] = source;
     }
 
-    ipcMain.on('updateSource', (event, index: number, name: string, url: string) => this.updateSource(index, name, url));
+    ipcMain.on('updateSource', (event, index: number, name: string, url: string, previewUrl: string) => this.updateSource(index, name, url, previewUrl));
     ipcMain.on('removeSource', (event, index: number) => this.removeSource(index));
     ipcMain.on('preview', (event, source: Source) => this.preview(source));
     ipcMain.on('take', (event, source: Source, transitionType: TransitionType, transitionDurationMs: number) => this.take(source, transitionType, transitionDurationMs));
@@ -39,15 +39,17 @@ export class SourceService {
     ipcMain.on('getLiveSource', event => event.returnValue = this.liveSource);
   }
 
-  public async updateSource(index: number, name: string, url: string) {
+  public async updateSource(index: number, name: string, url: string, previewUrl: string) {
     const source = this.sources[index];
     if (source) {
-      await this.obsHeadlessService.removeSource(source);
+      if (source.url !== url) {
+        await this.obsHeadlessService.removeSource(source);
+      }
       await this.obsService.removeSource(source.id);
     }
-    const newSourceId = await this.obsHeadlessService.addSource(name, url);
-    this.obsService.createSource(newSourceId, url);
-    this.sources[index] = { id: newSourceId, name, url };
+    const newSourceId = source?.url === url ? source.id : await this.obsHeadlessService.addSource(name, url);
+    this.obsService.createSource(newSourceId, previewUrl);
+    this.sources[index] = { id: newSourceId, name, url, previewUrl };
     this.broadcastMessage('sourcesChanged', this.sources);
   }
 
@@ -83,7 +85,7 @@ export class SourceService {
     }
     const sourceId = `output_${uuid.v4()}`;
     const sourceName = 'Output';
-    this.liveSource = { id: sourceId, name: sourceName, url: url };
+    this.liveSource = { id: sourceId, name: sourceName, url: url, previewUrl: url };
     await this.obsService.createSource(sourceId, url);
     this.broadcastMessage('liveChanged', this.liveSource);
   }

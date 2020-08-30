@@ -56,13 +56,14 @@ export class SourceView extends React.Component<SourceViewProps, SourceViewState
       title: 'Add Source',
       component: 'AddSourceDialog',
       width: 400,
-      height: 300,
+      height: 400,
     }, {
       name: this.props.source?.name,
       url: this.props.source?.url,
+      previewUrl: this.props.source?.previewUrl,
     });
     if (settings) {
-      this.sourceService.updateSource(this.props.index, settings.name, settings.url);
+      this.sourceService.updateSource(this.props.index, settings.name, settings.url, settings.previewUrl);
     }
   }
 

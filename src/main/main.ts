@@ -23,7 +23,9 @@ async function startApp() {
   });
   mainWindow.removeMenu();
   mainWindow.loadURL(`${loadUrl}?window=main`);
-  mainWindow.on('closed', () => mainWindow = undefined);
+  mainWindow.on('closed', () => {
+    app.exit(0);
+  });
   mainWindow.maximize();
 
   // Dialog window
