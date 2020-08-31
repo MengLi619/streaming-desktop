@@ -1,0 +1,47 @@
+name: streaming-desktop-cicd
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  PUBLISH_OSS_BUCKET: ${{ secrets.PUBLISH_OSS_BUCKET }}
+  PUBLISH_OSS_REGION: ${{ secrets.PUBLISH_OSS_REGION }}
+  PUBLISH_OSS_ACCESS_KEY_ID: ${{ secrets.PUBLISH_OSS_ACCESS_KEY_ID }}
+  PUBLISH_OSS_ACCESS_KEY_SECRET: ${{ secrets.PUBLISH_OSS_ACCESS_KEY_SECRET }}
+
+jobs:
+  build_windows_package:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Npm install
+        run: npm ci --production
+
+      - name: Build and publish windows package
+        run: |
+          sed -i .bak 's/{{PUBLISH_OSS_BUCKET}}/$PUBLISH_OSS_BUCKET' package.json && \
+          sed -i .bak 's/{{PUBLISH_OSS_REGION}}/$PUBLISH_OSS_REGION' package.json && \
+          sed -i .bak 's/{{PUBLISH_OSS_ACCESS_KEY_ID}}/$PUBLISH_OSS_ACCESS_KEY_ID' package.json && \
+          sed -i .bak 's/{{PUBLISH_OSS_ACCESS_KEY_SECRET}}/$PUBLISH_OSS_ACCESS_KEY_SECRET' package.json && \
+          npm run package:windows
+        shell: bash
+  build_mac_package:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Npm install
+        run: npm ci --production
+
+      - name: Build and publish mac package
+        run: |
+          sed -i .bak 's/{{PUBLISH_OSS_BUCKET}}/$PUBLISH_OSS_BUCKET' package.json && \
+          sed -i .bak 's/{{PUBLISH_OSS_REGION}}/$PUBLISH_OSS_REGION' package.json && \
+          sed -i .bak 's/{{PUBLISH_OSS_ACCESS_KEY_ID}}/$PUBLISH_OSS_ACCESS_KEY_ID' package.json && \
+          sed -i .bak 's/{{PUBLISH_OSS_ACCESS_KEY_SECRET}}/$PUBLISH_OSS_ACCESS_KEY_SECRET' package.json && \
+          npm run package:mac
+        shell: bash

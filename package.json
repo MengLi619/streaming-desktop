@@ -18,7 +18,8 @@
     "build:prod": "npm run build",
     "build-main:prod": "npm run build-main",
     "preelectron-pack": "rm -rf build && npm run build:prod && npm run build-main:prod",
-    "electron-pack": "rm -rf dist && electron-builder build -w"
+    "package:windows": "rm -rf dist && electron-builder build -w",
+    "package:mac": "rm -rf dist && electron-builder build -m"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.14.0",
@@ -70,6 +71,7 @@
     "concurrently": "^5.2.0",
     "electron": "6.1.11",
     "electron-builder": "22.7.0",
+    "electron-publisher-alioss": "^1.0.2",
     "node-fetch": "^2.6.0",
     "node-sass": "^4.14.1",
     "protobufjs": "^6.10.1",
@@ -113,6 +115,18 @@
     ],
     "directories": {
       "buildResources": "assets"
-    }
+    },
+    "publish": [
+      {
+        "provider": "custom",
+        "providerName": "alioss",
+        "path": "/${name}/${os}/${arch}/${filename}",
+        "bucket": "{{PUBLISH_OSS_BUCKET}}",
+        "region": "{{PUBLISH_OSS_REGION}}",
+        "accessKeyId": "{{PUBLISH_OSS_ACCESS_KEY_ID}}",
+        "accessKeySecret": "{{PUBLISH_OSS_ACCESS_KEY_SECRET}}",
+        "resumable": true
+      }
+    ]
   }
 }

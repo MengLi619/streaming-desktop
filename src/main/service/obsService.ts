@@ -11,14 +11,13 @@ const DEFAULT_SOURCE_SETTINGS = {
   clear_on_media_end: true,
   is_local_file: false,
   looping: false,
-  restart_on_activate: true,
+  close_when_inactive: false,
+  restart_on_activate: false,
   speed_percent: 100,
 };
 
 @Service()
 export class ObsService {
-  private globalTransition?: obs.ITransition;
-  private globalScene?: obs.IScene;
   private readonly transitions: Map<TransitionType, obs.ITransition> = new Map<TransitionType, obs.ITransition>();
 
   public initialize() {
@@ -39,12 +38,6 @@ export class ObsService {
       process.env.APP_VERSION || '1.0.0',
     );
 
-    // Add source to global transaction to make source readable
-    this.globalTransition = obs.TransitionFactory.create(TransitionType.Cut, 'Global Transition');
-    obs.Global.setOutputSource(0, this.globalTransition);
-    this.globalScene = obs.SceneFactory.create('Global Scene');
-    this.globalTransition.set(this.globalScene);
-
     ipcMain.on('createOBSDisplay', (event, electronWindowId: number, name: string, sourceId: string) => event.returnValue = this.createOBSDisplay(electronWindowId, name, sourceId));
     ipcMain.on('moveOBSDisplay', (event, name: string, x: number, y: number) => event.returnValue = this.moveOBSDisplay(name, x, y));
     ipcMain.on('resizeOBSDisplay', (event, name: string, width: number, height: number) => event.returnValue = this.resizeOBSDisplay(name, width, height));
@@ -53,13 +46,10 @@ export class ObsService {
   }
 
   public createSource(sourceId: string, url: string): void {
-    const obsSource = obs.InputFactory.create('ffmpeg_source', sourceId, {
+    obs.InputFactory.create('ffmpeg_source', sourceId, {
       ...DEFAULT_SOURCE_SETTINGS,
       input: url,
     });
-    if (this.globalScene) {
-      this.globalScene.add(obsSource);
-    }
   }
 
   public removeSource(sourceId: string): void {
