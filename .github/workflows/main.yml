@@ -22,10 +22,11 @@ jobs:
 
       - name: Build and publish windows package
         run: |
-          sed -i .bak 's/{{PUBLISH_OSS_BUCKET}}/$PUBLISH_OSS_BUCKET' package.json && \
-          sed -i .bak 's/{{PUBLISH_OSS_REGION}}/$PUBLISH_OSS_REGION' package.json && \
-          sed -i .bak 's/{{PUBLISH_OSS_ACCESS_KEY_ID}}/$PUBLISH_OSS_ACCESS_KEY_ID' package.json && \
-          sed -i .bak 's/{{PUBLISH_OSS_ACCESS_KEY_SECRET}}/$PUBLISH_OSS_ACCESS_KEY_SECRET' package.json && \
+          sed -i.bak 's/{{PUBLISH_OSS_BUCKET}}/'$PUBLISH_OSS_BUCKET'/g' package.json && \
+          sed -i.bak 's/{{PUBLISH_OSS_REGION}}/'$PUBLISH_OSS_REGION'/g' package.json && \
+          sed -i.bak 's/{{PUBLISH_OSS_ACCESS_KEY_ID}}/'$PUBLISH_OSS_ACCESS_KEY_ID'/g' package.json && \
+          sed -i.bak 's/{{PUBLISH_OSS_ACCESS_KEY_SECRET}}/'$PUBLISH_OSS_ACCESS_KEY_SECRET'/g' package.json && \
+          rm -f package.json.bak && \
           npm run package:windows
         shell: bash
   build_mac_package:
@@ -39,9 +40,10 @@ jobs:
 
       - name: Build and publish mac package
         run: |
-          sed -i .bak 's/{{PUBLISH_OSS_BUCKET}}/$PUBLISH_OSS_BUCKET' package.json && \
-          sed -i .bak 's/{{PUBLISH_OSS_REGION}}/$PUBLISH_OSS_REGION' package.json && \
-          sed -i .bak 's/{{PUBLISH_OSS_ACCESS_KEY_ID}}/$PUBLISH_OSS_ACCESS_KEY_ID' package.json && \
-          sed -i .bak 's/{{PUBLISH_OSS_ACCESS_KEY_SECRET}}/$PUBLISH_OSS_ACCESS_KEY_SECRET' package.json && \
+          sed -i.bak 's/{{PUBLISH_OSS_BUCKET}}/'$PUBLISH_OSS_BUCKET'/g' package.json && \
+          sed -i.bak 's/{{PUBLISH_OSS_REGION}}/'$PUBLISH_OSS_REGION'/g' package.json && \
+          sed -i.bak 's/{{PUBLISH_OSS_ACCESS_KEY_ID}}/'$PUBLISH_OSS_ACCESS_KEY_ID'/g' package.json && \
+          sed -i.bak 's/{{PUBLISH_OSS_ACCESS_KEY_SECRET}}/'$PUBLISH_OSS_ACCESS_KEY_SECRET'/g' package.json && \
+          rm -f package.json.bak && \
           npm run package:mac
         shell: bash
