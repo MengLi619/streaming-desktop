@@ -5,13 +5,15 @@ on:
     branches: [ master ]
 
 env:
-  PUBLISH_OSS_BUCKET: ${{ secrets.PUBLISH_OSS_BUCKET }}
-  PUBLISH_OSS_REGION: ${{ secrets.PUBLISH_OSS_REGION }}
-  PUBLISH_OSS_ACCESS_KEY_ID: ${{ secrets.PUBLISH_OSS_ACCESS_KEY_ID }}
-  PUBLISH_OSS_ACCESS_KEY_SECRET: ${{ secrets.PUBLISH_OSS_ACCESS_KEY_SECRET }}
+  PUBLISH_BUCKET: ${{ secrets.PUBLISH_BUCKET }}
+  PUBLISH_REGION: ${{ secrets.PUBLISH_REGION }}
+  PUBLISH_ACCESS_KEY_ID: ${{ secrets.PUBLISH_ACCESS_KEY_ID }}
+  PUBLISH_ACCESS_KEY_SECRET: ${{ secrets.PUBLISH_ACCESS_KEY_SECRET }}
 
 jobs:
   build_windows_package:
+    env:
+      PUBLISH_FILE_EXT: exe
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -21,15 +23,11 @@ jobs:
         run: npm ci
 
       - name: Build and publish windows package
-        run: |
-          sed -i.bak 's/{{PUBLISH_OSS_BUCKET}}/'$PUBLISH_OSS_BUCKET'/g' package.json && \
-          sed -i.bak 's/{{PUBLISH_OSS_REGION}}/'$PUBLISH_OSS_REGION'/g' package.json && \
-          sed -i.bak 's/{{PUBLISH_OSS_ACCESS_KEY_ID}}/'$PUBLISH_OSS_ACCESS_KEY_ID'/g' package.json && \
-          sed -i.bak 's/{{PUBLISH_OSS_ACCESS_KEY_SECRET}}/'$PUBLISH_OSS_ACCESS_KEY_SECRET'/g' package.json && \
-          rm -f package.json.bak && \
-          npm run package:windows
+        run: npm run package:windows
         shell: bash
   build_mac_package:
+    env:
+      PUBLISH_FILE_EXT: dmg
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -39,11 +37,5 @@ jobs:
         run: npm ci
 
       - name: Build and publish mac package
-        run: |
-          sed -i.bak 's/{{PUBLISH_OSS_BUCKET}}/'$PUBLISH_OSS_BUCKET'/g' package.json && \
-          sed -i.bak 's/{{PUBLISH_OSS_REGION}}/'$PUBLISH_OSS_REGION'/g' package.json && \
-          sed -i.bak 's/{{PUBLISH_OSS_ACCESS_KEY_ID}}/'$PUBLISH_OSS_ACCESS_KEY_ID'/g' package.json && \
-          sed -i.bak 's/{{PUBLISH_OSS_ACCESS_KEY_SECRET}}/'$PUBLISH_OSS_ACCESS_KEY_SECRET'/g' package.json && \
-          rm -f package.json.bak && \
-          npm run package:mac
+        run: npm run package:mac
         shell: bash

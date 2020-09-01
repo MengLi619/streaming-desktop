@@ -91,7 +91,6 @@ export class Display extends React.Component<DisplayProps> {
     // Windows: Top-left origin
     // Mac: Bottom-left origin
     const yCoord = isMac() ? window.innerHeight - rect.bottom : rect.top;
-    const borderWidth = 1;
 
     return {
       x: (rect.left + 1) * scaleFactor,

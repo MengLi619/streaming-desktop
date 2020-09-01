@@ -17,9 +17,9 @@
     "server": "npm run build-main && env-cmd -f env/server.env concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "build:prod": "npm run build",
     "build-main:prod": "npm run build-main",
-    "preelectron-pack": "rm -rf build && npm run build:prod && npm run build-main:prod",
-    "package:windows": "rm -rf dist && electron-builder build -w",
-    "package:mac": "rm -rf dist && electron-builder build -m"
+    "prepackage": "rm -rf build && npm run build:prod && npm run build-main:prod",
+    "package:windows": "npm run prepackage && rm -rf dist && electron-builder build -w --publish always",
+    "package:mac": "npm run prepackage && rm -rf dist && electron-builder build -m --publish always"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.14.0",
@@ -106,25 +106,26 @@
       "main": "build/main/main.js"
     },
     "mac": {
+      "target": "dmg",
       "category": "public.app-category.utilities",
       "identity": null
+    },
+    "win": {
+      "target": "nsis"
     },
     "files": [
       "build/**/*",
       "node_modules/**/*"
     ],
-    "directories": {
-      "buildResources": "assets"
-    },
     "publish": [
       {
         "provider": "custom",
         "providerName": "alioss",
-        "path": "/${name}/${os}/${arch}/${filename}",
-        "bucket": "{{PUBLISH_OSS_BUCKET}}",
-        "region": "{{PUBLISH_OSS_REGION}}",
-        "accessKeyId": "{{PUBLISH_OSS_ACCESS_KEY_ID}}",
-        "accessKeySecret": "{{PUBLISH_OSS_ACCESS_KEY_SECRET}}",
+        "path": "/${name}/${os}/${productName}-${version}.${env.PUBLISH_FILE_EXT}",
+        "bucket": "${env.PUBLISH_BUCKET}",
+        "region": "${env.PUBLISH_REGION}",
+        "accessKeyId": "${env.PUBLISH_ACCESS_KEY_ID}",
+        "accessKeySecret": "${env.PUBLISH_ACCESS_KEY_SECRET}",
         "resumable": true
       }
     ]
