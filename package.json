@@ -8,7 +8,7 @@
     "build": "rescripts build",
     "test": "rescripts test",
     "eject": "react-scripts eject",
-    "lint": "tsc --noEmit",
+    "lint": "tsc --noEmit && tsc -p src/main --noEmit",
     "postinstall": "node ./scripts/install-native-deps.js",
     "copy-native-deps": "sh ./scripts/copy-native-deps.sh",
     "build-grpc": "node src/build-grpc.js",

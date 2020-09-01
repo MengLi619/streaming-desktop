@@ -2,7 +2,7 @@ export type Source = {
   id: string;
   name: string;
   url: string;
-  previewUrl: string;
+  previewUrl?: string;
 }
 
 export enum TransitionType {

@@ -4,11 +4,13 @@ import * as uuid from 'uuid';
 import { ObsService } from './obsService';
 import { ObsHeadlessService } from './obsHeadlessService';
 import { ipcMain, webContents } from 'electron';
+import { StorageService } from './storageService';
 
 @Service()
 export class SourceService {
   private readonly obsService: ObsService = Container.get(ObsService);
   private readonly obsHeadlessService: ObsHeadlessService = Container.get(ObsHeadlessService);
+  private readonly storageService: StorageService = Container.get(StorageService);
 
   private sources: Record<number, Source> = {};
   private previewSource?: Source;
@@ -20,7 +22,9 @@ export class SourceService {
     this.obsService.initialize();
 
     // Initialize remote obs
-    const sources = await this.obsHeadlessService.initialize();
+    const savedSources = this.storageService.loadSources();
+    const sources = await this.obsHeadlessService.initialize(savedSources);
+
     let index = 0;
     for (const source of sources) {
       this.obsService.createSource(source.id, source.url);
@@ -51,6 +55,7 @@ export class SourceService {
     this.obsService.createSource(newSourceId, previewUrl);
     this.sources[index] = { id: newSourceId, name, url, previewUrl };
     this.broadcastMessage('sourcesChanged', this.sources);
+    this.storageService.saveSources(this.sources);
   }
 
   public async removeSource(index: number) {
@@ -61,6 +66,7 @@ export class SourceService {
     }
     delete this.sources[index];
     this.broadcastMessage('sourcesChanged', this.sources);
+    this.storageService.saveSources(this.sources);
   }
 
   public preview(source: Source) {
@@ -88,6 +94,7 @@ export class SourceService {
     this.liveSource = { id: sourceId, name: sourceName, url: url, previewUrl: url };
     await this.obsService.createSource(sourceId, url);
     this.broadcastMessage('liveChanged', this.liveSource);
+    this.storageService.saveOutputUrl(url);
   }
 
   private broadcastMessage(channel: string, ...args: any[]) {

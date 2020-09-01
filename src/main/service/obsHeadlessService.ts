@@ -40,7 +40,7 @@ export class ObsHeadlessService {
     this.sceneSetAsCurrent = promisify(this.studioClient.sceneSetAsCurrent).bind(this.studioClient) as (request: SceneSetAsCurrentRequest) => Promise<SceneSetAsCurrentResponse>;
   }
 
-  public async initialize(): Promise<Source[]> {
+  public async initialize(savedSources: Record<number, Source>): Promise<Source[]> {
     const shows = (await this.studioGet(new Empty())).getStudio()?.getShowsList() || [];
     this.show = shows.find(s => s.getName() === OBS_SHOW_NAME);
     if (!this.show) {
@@ -53,18 +53,19 @@ export class ObsHeadlessService {
     try {
       await this.studioStart(new Empty());
     } catch (error) {
-      console.log(`Failed to start obs headless`);
+      console.log(`Failed to start obs headless, maybe the show is already started.`);
     }
 
     // Get current sources
     const sources: Source[] = [];
     for (const scene of this.show.getScenesList()) {
       for (const source of scene.getSourcesList()) {
+        const savedSource = Object.values(savedSources).find(s => s.id === scene.getId());
         sources.push({
           id: scene.getId(),
           name: source.getName(),
           url: source.getUrl(),
-          previewUrl: source.getUrl(),
+          previewUrl: savedSource && savedSource.previewUrl,
         });
       }
     }
