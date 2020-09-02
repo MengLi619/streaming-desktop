@@ -31,6 +31,12 @@ export class SourceService {
       this.sources[index++] = source;
     }
 
+    // Create output
+    const outputUrl = this.storageService.loadOutputUrl();
+    if (outputUrl) {
+      this.updateLiveUrl(outputUrl);
+    }
+
     ipcMain.on('updateSource', (event, index: number, name: string, url: string, previewUrl: string) => this.updateSource(index, name, url, previewUrl));
     ipcMain.on('removeSource', (event, index: number) => this.removeSource(index));
     ipcMain.on('preview', (event, source: Source) => this.preview(source));
@@ -46,12 +52,10 @@ export class SourceService {
   public async updateSource(index: number, name: string, url: string, previewUrl: string) {
     const source = this.sources[index];
     if (source) {
-      if (source.url !== url) {
-        await this.obsHeadlessService.removeSource(source);
-      }
+      await this.obsHeadlessService.removeSource(source);
       await this.obsService.removeSource(source.id);
     }
-    const newSourceId = source?.url === url ? source.id : await this.obsHeadlessService.addSource(name, url);
+    const newSourceId = await this.obsHeadlessService.addSource(name, url);
     this.obsService.createSource(newSourceId, previewUrl);
     this.sources[index] = { id: newSourceId, name, url, previewUrl };
     this.broadcastMessage('sourcesChanged', this.sources);
@@ -81,18 +85,18 @@ export class SourceService {
     this.broadcastMessage('programChanged', this.programTransition);
   }
 
-  public async updateLiveUrl(url: string) {
+  public updateLiveUrl(url: string) {
     if (url === this.liveSource?.url) {
       return;
     }
     if (this.liveSource) {
-      await this.obsService.removeSource(this.liveSource.id);
+      this.obsService.removeSource(this.liveSource.id);
       this.liveSource = undefined;
     }
     const sourceId = `output_${uuid.v4()}`;
     const sourceName = 'Output';
     this.liveSource = { id: sourceId, name: sourceName, url: url, previewUrl: url };
-    await this.obsService.createSource(sourceId, url);
+    this.obsService.createSource(sourceId, url);
     this.broadcastMessage('liveChanged', this.liveSource);
     this.storageService.saveOutputUrl(url);
   }

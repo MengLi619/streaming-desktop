@@ -16,7 +16,9 @@ type OutputSettingDialogState = {
 export class OutputSettingDialog extends React.Component<OutputSettingDialogProps, OutputSettingDialogState> {
   constructor(props: OutputSettingDialogProps) {
     super(props);
-    this.state = {};
+    this.state = {
+      url: this.props.defaultValue?.url,
+    };
   }
 
   public render() {

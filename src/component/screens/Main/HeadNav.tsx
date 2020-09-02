@@ -67,6 +67,8 @@ export class HeadNav extends React.Component<{}, HeadNavState> {
       component: 'OutputSettingDialog',
       width: 400,
       height: 300,
+    }, {
+      url: this.sourceService.liveSource?.url,
     });
     if (setting && setting.url) {
       await this.sourceService.updateLiveUrl(setting.url);
