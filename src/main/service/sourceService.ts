@@ -6,6 +6,8 @@ import { ObsHeadlessService } from './obsHeadlessService';
 import { ipcMain, webContents } from 'electron';
 import { StorageService } from './storageService';
 
+const DEFAULT_MUTED = true;
+
 @Service()
 export class SourceService {
   private readonly obsService: ObsService = Container.get(ObsService);
@@ -27,7 +29,7 @@ export class SourceService {
 
     let index = 0;
     for (const source of sources) {
-      this.obsService.createSource(source.id, source.url);
+      this.obsService.createSource(source.id, source.url, source.muted);
       this.sources[index++] = source;
     }
 
@@ -42,6 +44,7 @@ export class SourceService {
     ipcMain.on('preview', (event, source: Source) => this.preview(source));
     ipcMain.on('take', (event, source: Source, transitionType: TransitionType, transitionDurationMs: number) => this.take(source, transitionType, transitionDurationMs));
     ipcMain.on('updateLiveUrl', (event, url: string) => this.updateLiveUrl(url));
+    ipcMain.on('muteSource', (event, source: Source, mute: boolean) => this.muteSource(source, mute));
 
     ipcMain.on('getSources', event => event.returnValue = this.sources);
     ipcMain.on('getPreviewSource', event => event.returnValue = this.previewSource);
@@ -56,8 +59,9 @@ export class SourceService {
       await this.obsService.removeSource(source.id);
     }
     const newSourceId = await this.obsHeadlessService.addSource(name, url);
-    this.obsService.createSource(newSourceId, previewUrl);
-    this.sources[index] = { id: newSourceId, name, url, previewUrl };
+    const mute = source?.muted ?? DEFAULT_MUTED;
+    this.obsService.createSource(newSourceId, previewUrl, mute);
+    this.sources[index] = { id: newSourceId, name, url, previewUrl, muted: mute};
     this.broadcastMessage('sourcesChanged', this.sources);
     this.storageService.saveSources(this.sources);
   }
@@ -91,14 +95,19 @@ export class SourceService {
     }
     if (this.liveSource) {
       this.obsService.removeSource(this.liveSource.id);
-      this.liveSource = undefined;
     }
     const sourceId = `output_${uuid.v4()}`;
     const sourceName = 'Output';
-    this.liveSource = { id: sourceId, name: sourceName, url: url, previewUrl: url };
-    this.obsService.createSource(sourceId, url);
+    this.liveSource = { id: sourceId, name: sourceName, url: url, previewUrl: url, muted: this.liveSource?.muted ?? DEFAULT_MUTED };
+    this.obsService.createSource(sourceId, url, this.liveSource.muted);
     this.broadcastMessage('liveChanged', this.liveSource);
     this.storageService.saveOutputUrl(url);
+  }
+
+  private muteSource(source: Source, mute: boolean) {
+    this.obsService.muteSource(source.id, mute);
+    source.muted = mute;
+    this.broadcastMessage('sourceMuteChanged', source);
   }
 
   private broadcastMessage(channel: string, ...args: any[]) {

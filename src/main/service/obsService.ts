@@ -45,11 +45,15 @@ export class ObsService {
     ipcMain.on('createOBSIOSurface', (event, name: string) => event.returnValue = this.createOBSIOSurface(name));
   }
 
-  public createSource(sourceId: string, url: string): void {
-    obs.InputFactory.create('ffmpeg_source', sourceId, {
+  public createSource(sourceId: string, url: string, mute: boolean): void {
+    const obsSource = obs.InputFactory.create('ffmpeg_source', sourceId, {
       ...DEFAULT_SOURCE_SETTINGS,
       input: url,
     });
+
+    // Initialize audio
+    obsSource.muted = mute;
+    obsSource.monitoringType = obs.EMonitoringType.MonitoringAndOutput;
   }
 
   public removeSource(sourceId: string): void {
@@ -104,5 +108,13 @@ export class ObsService {
       type: transitionType,
       source: to,
     };
+  }
+
+  public muteSource(sourceId: string, mute: boolean) {
+    console.log(`mute source ${sourceId}: ${mute}`);
+    const obsSource = obs.InputFactory.fromName(sourceId);
+    if (obsSource) {
+      obsSource.muted = mute;
+    }
   }
 }

@@ -9,6 +9,7 @@ export class SourceService {
   public previewChanged = new SimpleEvent<Source>();
   public programChanged = new SimpleEvent<Transition>();
   public liveChanged = new SimpleEvent<Source | undefined>();
+  public sourceMuteChanged = new SimpleEvent<Source>();
 
   public initialize(): void {
     ipcRenderer.on('sourcesChanged', (event, sources: Record<number, Source>) => {
@@ -22,6 +23,9 @@ export class SourceService {
     });
     ipcRenderer.on('liveChanged', (event, source: Source) => {
       this.liveChanged.emit(source);
+    });
+    ipcRenderer.on('sourceMuteChanged', (event, source: Source) => {
+      this.sourceMuteChanged.emit(source);
     });
   }
 
@@ -47,6 +51,10 @@ export class SourceService {
 
   public removeSource(index: number): void {
     ipcRenderer.send('removeSource', index);
+  }
+
+  public muteSource(source: Source, mute: boolean): void {
+    ipcRenderer.send('muteSource', source, mute);
   }
 
   public preview(source: Source): void {

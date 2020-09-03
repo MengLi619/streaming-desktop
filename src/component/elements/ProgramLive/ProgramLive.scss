@@ -14,8 +14,11 @@
   .toolbar {
     display: flex;
     justify-content: center;
+    align-items: center;
     h2 {
       margin: 5px 0;
+      flex: 1;
+      text-align: center;
     }
   }
 }

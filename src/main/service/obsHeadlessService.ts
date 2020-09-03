@@ -66,6 +66,7 @@ export class ObsHeadlessService {
           name: source.getName(),
           url: source.getUrl(),
           previewUrl: savedSource && savedSource.previewUrl,
+          muted: true,
         });
       }
     }

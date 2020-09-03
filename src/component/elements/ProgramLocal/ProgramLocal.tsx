@@ -26,6 +26,16 @@ export class ProgramLocal extends React.Component<{}, ProgramLocalState> {
         programTransition: transition,
       })
     });
+    this.sourceService.sourceMuteChanged.on(this, source => {
+      if (source.id === this.state.programTransition?.source?.id) {
+        this.setState({
+          programTransition: {
+            ...this.state.programTransition,
+            source: source,
+          },
+        });
+      }
+    });
   }
 
   public componentWillUnmount() {
@@ -48,8 +58,16 @@ export class ProgramLocal extends React.Component<{}, ProgramLocalState> {
         </div>
         <div className='toolbar'>
           <h2>PGM输出</h2>
+          <i className={`${!this.state.programTransition?.source || this.state.programTransition.source.muted ? 'icon-mute' : 'icon-audio'} icon-button`}
+             onClick={() => this.onMuteClicked()} />
         </div>
       </div>
     );
+  }
+
+  private onMuteClicked() {
+    if (this.state.programTransition) {
+      this.sourceService.muteSource(this.state.programTransition.source, !this.state.programTransition.source.muted);
+    }
   }
 }

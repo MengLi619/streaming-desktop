@@ -26,6 +26,13 @@ export class ProgramLive extends React.Component<{}, ProgramLiveState> {
         liveSource: source,
       });
     });
+    this.sourceService.sourceMuteChanged.on(this, source => {
+      if (source.id === this.state.liveSource?.id) {
+        this.setState({
+          liveSource: source,
+        });
+      }
+    });
   }
 
   public componentWillUnmount() {
@@ -48,8 +55,16 @@ export class ProgramLive extends React.Component<{}, ProgramLiveState> {
         </div>
         <div className='toolbar'>
           <h2>LIVE输出</h2>
+          <i className={`${!this.state.liveSource || this.state.liveSource.muted ? 'icon-mute' : 'icon-audio'} icon-button`}
+             onClick={() => this.onMuteClicked()} />
         </div>
       </div>
     );
+  }
+
+  private onMuteClicked() {
+    if (this.state.liveSource) {
+      this.sourceService.muteSource(this.state.liveSource, !this.state.liveSource.muted);
+    }
   }
 }

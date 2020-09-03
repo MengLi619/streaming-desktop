@@ -3,6 +3,7 @@ export type Source = {
   name: string;
   url: string;
   previewUrl?: string;
+  muted: boolean;
 }
 
 export enum TransitionType {

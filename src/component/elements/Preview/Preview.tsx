@@ -25,6 +25,13 @@ export class Preview extends React.Component<{}, PreviewState> {
         previewSource: source,
       })
     });
+    this.sourceService.sourceMuteChanged.on(this, source => {
+      if (source.id === this.state.previewSource?.id) {
+        this.setState({
+          previewSource: source,
+        });
+      }
+    });
   }
 
   public componentWillUnmount() {
@@ -47,8 +54,15 @@ export class Preview extends React.Component<{}, PreviewState> {
         </div>
         <div className='toolbar'>
           <h2>PVW预监</h2>
+          <i className={`${!this.state.previewSource || this.state.previewSource.muted ? 'icon-mute' : 'icon-audio'} icon-button`} onClick={() => this.onMuteClicked()} />
         </div>
       </div>
     );
+  }
+
+  private onMuteClicked() {
+    if (this.state.previewSource) {
+      this.sourceService.muteSource(this.state.previewSource, !this.state.previewSource?.muted);
+    }
   }
 }
