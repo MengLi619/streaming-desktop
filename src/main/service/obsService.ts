@@ -54,6 +54,11 @@ export class ObsService {
     // Initialize audio
     obsSource.muted = mute;
     obsSource.monitoringType = obs.EMonitoringType.MonitoringAndOutput;
+    const obsVolmeter = obs.VolmeterFactory.create(obs.EFaderType.IEC);
+    obsVolmeter.attach(obsSource);
+
+    const obsFader = obs.FaderFactory.create(obs.EFaderType.IEC);
+    obsFader.attach(obsSource);
   }
 
   public removeSource(sourceId: string): void {
