@@ -87,6 +87,7 @@ export class Display extends React.Component<DisplayProps> {
 
   private getCurrentPosition(rect: ClientRect): Rectangle {
     const scaleFactor = isMac() ? 1 : getScaleFactor();
+    console.log(`scaleFactory = ${scaleFactor} ${isMac()}`);
 
     // Windows: Top-left origin
     // Mac: Bottom-left origin
