@@ -48,21 +48,19 @@ export class ObsService {
     ipcMain.on('createOBSIOSurface', (event, name: string) => event.returnValue = this.createOBSIOSurface(name));
   }
 
-  public createSource(sourceId: string, url: string, mute: boolean, channel?: number): void {
+  public createSource(sourceId: string, url: string, mute: boolean, channel: number): void {
     const obsSource = obs.InputFactory.create('ffmpeg_source', sourceId, {
       ...DEFAULT_SOURCE_SETTINGS,
       input: url,
     });
 
     // Output Channel
-    if (channel !== undefined) {
-      obs.Global.setOutputSource(channel, obsSource);
-    }
+    obs.Global.setOutputSource(channel, obsSource);
 
     // Initialize audio
     obsSource.muted = mute;
     obsSource.monitoringType = mute ? obs.EMonitoringType.None : obs.EMonitoringType.MonitoringOnly;
-    
+
     const obsFader = obs.FaderFactory.create(obs.EFaderType.IEC);
     obsFader.attach(obsSource);
     obsFader.mul = 1;

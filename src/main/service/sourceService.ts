@@ -99,8 +99,9 @@ export class SourceService {
     }
     const sourceId = `output_${uuid.v4()}`;
     const sourceName = 'Output';
+    const liveChannel = 63;
     this.liveSource = { id: sourceId, name: sourceName, url: url, previewUrl: url, muted: this.liveSource?.muted ?? DEFAULT_MUTED };
-    this.obsService.createSource(sourceId, url, this.liveSource.muted);
+    this.obsService.createSource(sourceId, url, this.liveSource.muted, liveChannel);
     this.broadcastMessage('liveChanged', this.liveSource);
     this.storageService.saveOutputUrl(url);
   }
