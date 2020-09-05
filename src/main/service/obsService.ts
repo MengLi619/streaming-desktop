@@ -4,6 +4,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { Source, Transition, TransitionType } from '../../types/obs';
 import * as uuid from 'uuid';
 import * as path from 'path';
+import { EMonitoringType } from 'obs-studio-node';
 
 const DEFAULT_SOURCE_SETTINGS = {
   buffering_mb: 2,
@@ -38,6 +39,8 @@ export class ObsService {
       process.env.APP_VERSION || '1.0.0',
     );
 
+    obs.NodeObs.OBS_sett
+
     ipcMain.on('createOBSDisplay', (event, electronWindowId: number, name: string, sourceId: string) => event.returnValue = this.createOBSDisplay(electronWindowId, name, sourceId));
     ipcMain.on('moveOBSDisplay', (event, name: string, x: number, y: number) => event.returnValue = this.moveOBSDisplay(name, x, y));
     ipcMain.on('resizeOBSDisplay', (event, name: string, width: number, height: number) => event.returnValue = this.resizeOBSDisplay(name, width, height));
@@ -45,15 +48,20 @@ export class ObsService {
     ipcMain.on('createOBSIOSurface', (event, name: string) => event.returnValue = this.createOBSIOSurface(name));
   }
 
-  public createSource(sourceId: string, url: string, mute: boolean): void {
+  public createSource(sourceId: string, url: string, mute: boolean, channel?: number): void {
     const obsSource = obs.InputFactory.create('ffmpeg_source', sourceId, {
       ...DEFAULT_SOURCE_SETTINGS,
       input: url,
     });
 
+    // Output Channel
+    if (channel !== undefined) {
+      obs.Global.setOutputSource(channel, obsSource);
+    }
+
     // Initialize audio
     obsSource.muted = mute;
-    obsSource.monitoringType = obs.EMonitoringType.MonitoringAndOutput;
+    obsSource.monitoringType = mute ? obs.EMonitoringType.None : obs.EMonitoringType.MonitoringOnly;
   }
 
   public removeSource(sourceId: string): void {
@@ -115,6 +123,7 @@ export class ObsService {
     const obsSource = obs.InputFactory.fromName(sourceId);
     if (obsSource) {
       obsSource.muted = mute;
+      obsSource.monitoringType = mute ? EMonitoringType.None : EMonitoringType.MonitoringOnly;
     }
   }
 }

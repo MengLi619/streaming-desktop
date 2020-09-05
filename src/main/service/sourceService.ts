@@ -29,8 +29,9 @@ export class SourceService {
 
     let index = 0;
     for (const source of sources) {
-      this.obsService.createSource(source.id, source.url, source.muted);
-      this.sources[index++] = source;
+      this.obsService.createSource(source.id, source.url, source.muted, index);
+      this.sources[index] = source;
+      index++;
     }
 
     // Create output
@@ -60,7 +61,7 @@ export class SourceService {
     }
     const newSourceId = await this.obsHeadlessService.addSource(name, url);
     const mute = source?.muted ?? DEFAULT_MUTED;
-    this.obsService.createSource(newSourceId, previewUrl, mute);
+    this.obsService.createSource(newSourceId, previewUrl, mute, index);
     this.sources[index] = { id: newSourceId, name, url, previewUrl, muted: mute};
     this.broadcastMessage('sourcesChanged', this.sources);
     this.storageService.saveSources(this.sources);
