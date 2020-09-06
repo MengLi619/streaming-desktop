@@ -1,9 +1,16 @@
 .ExternalWindow {
   height: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
   color: var(--paragraph);
   background-color: var(--background);
+
+  .fullscreen-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
 
   .top {
     height: 40vh;
@@ -12,7 +19,7 @@
     justify-content: space-around;
 
     .Preview-container, .ProgramLocal-container {
-      width: calc((40vh - 34px) * 16 / 9);
+      width: calc((40vh - 24px) * 16 / 9);
     }
   }
 

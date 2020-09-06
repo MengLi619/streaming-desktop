@@ -4,7 +4,7 @@ import { Container } from 'typedi';
 import { DialogService } from '../../../service/dialogService';
 import { OutputSetting } from '../../dialogs/OutputSettingDialog/OutputSettingDialog';
 import { SourceService } from '../../../service/sourceService';
-import { remote, ipcRenderer } from 'electron';
+import { remote } from 'electron';
 
 type HeadNavState = {
   fullscreen: boolean;
@@ -55,7 +55,7 @@ export class HeadNav extends React.Component<{}, HeadNavState> {
   }
 
   private onFullScreenClicked() {
-    ipcRenderer.send('fullScreen');
+    remote.getCurrentWindow().setFullScreen(!this.state.fullscreen);
     this.setState({
       fullscreen: !this.state.fullscreen,
     });

@@ -47,6 +47,10 @@ async function startApp() {
   });
 }
 
+// Fix windows scale factor
+app.commandLine.appendSwitch('high-dpi-support', '1');
+app.commandLine.appendSwitch('force-device-scale-factor', '1');
+
 app.on('ready', startApp);
 
 app.on('window-all-closed', () => {
@@ -79,11 +83,6 @@ ipcMain.on('dialogClosed', (event, sessionId, result) => {
 // Open DevTools
 ipcMain.on('openDevTools', () => {
   mainWindow?.webContents.openDevTools();
-});
-
-// Full Screen
-ipcMain.on('fullScreen', () => {
-  mainWindow?.setFullScreen(!mainWindow.isFullScreen());
 });
 
 // External window
