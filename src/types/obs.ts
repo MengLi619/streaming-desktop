@@ -4,6 +4,7 @@ export type Source = {
   url: string;
   previewUrl?: string;
   muted: boolean;
+  sceneId: string;
 }
 
 export enum TransitionType {

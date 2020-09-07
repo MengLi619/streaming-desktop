@@ -46,8 +46,8 @@ export class Preview extends React.Component<{}, PreviewState> {
             {
               this.state.previewSource &&
               <Display
-                key={this.state.previewSource.id}
-                sourceId={this.state.previewSource.id}
+                key={this.state.previewSource.sceneId}
+                sourceId={this.state.previewSource.sceneId}
               />
             }
           </div>

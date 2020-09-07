@@ -29,7 +29,7 @@ export class SourceService {
 
     let index = 0;
     for (const source of sources) {
-      this.obsService.createSource(source.id, source.url, source.muted, index);
+      source.sceneId = this.obsService.createSource(source.id, source.url, source.muted, index);
       this.sources[index] = source;
       index++;
     }
@@ -61,8 +61,8 @@ export class SourceService {
     }
     const newSourceId = await this.obsHeadlessService.addSource(name, url);
     const mute = source?.muted ?? DEFAULT_MUTED;
-    this.obsService.createSource(newSourceId, previewUrl, mute, index);
-    this.sources[index] = { id: newSourceId, name, url, previewUrl, muted: mute};
+    const sceneId = this.obsService.createSource(newSourceId, previewUrl, mute, index);
+    this.sources[index] = { id: newSourceId, name, url, previewUrl, muted: mute, sceneId};
     this.broadcastMessage('sourcesChanged', this.sources);
     this.storageService.saveSources(this.sources);
   }
@@ -100,7 +100,14 @@ export class SourceService {
     const sourceId = `output_${uuid.v4()}`;
     const sourceName = 'Output';
     const liveChannel = 63;
-    this.liveSource = { id: sourceId, name: sourceName, url: url, previewUrl: url, muted: this.liveSource?.muted ?? DEFAULT_MUTED };
+    this.liveSource = {
+      id: sourceId,
+      name: sourceName,
+      url: url,
+      previewUrl: url,
+      muted: this.liveSource?.muted ?? DEFAULT_MUTED,
+      sceneId: '',
+    };
     this.obsService.createSource(sourceId, url, this.liveSource.muted, liveChannel);
     this.broadcastMessage('liveChanged', this.liveSource);
     this.storageService.saveOutputUrl(url);

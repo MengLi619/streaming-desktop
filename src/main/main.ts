@@ -17,6 +17,8 @@ async function startApp() {
 
   // Main window
   mainWindow = new BrowserWindow({
+    maximizable: true,
+    fullscreen: true,
     webPreferences: {
       nodeIntegration: true,
     }
@@ -26,7 +28,6 @@ async function startApp() {
   mainWindow.on('closed', () => {
     app.exit(0);
   });
-  mainWindow.maximize();
 
   // Dialog window
   dialogWindow = new BrowserWindow({
