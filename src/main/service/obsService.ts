@@ -5,6 +5,7 @@ import { Source, Transition, TransitionType } from '../../types/obs';
 import * as uuid from 'uuid';
 import * as path from 'path';
 import { EMonitoringType } from 'obs-studio-node';
+import { ISceneItem } from 'obs-studio-node/module';
 
 const DEFAULT_SOURCE_SETTINGS = {
   buffering_mb: 2,
@@ -16,6 +17,8 @@ const DEFAULT_SOURCE_SETTINGS = {
   restart_on_activate: false,
   speed_percent: 100,
 };
+
+const DEFAULT_BASE_RESOLUTION = '1920x1080';
 
 @Service()
 export class ObsService {
@@ -39,7 +42,8 @@ export class ObsService {
       process.env.APP_VERSION || '1.0.0',
     );
 
-    obs.NodeObs.OBS_sett
+    // Set default resolution, scene size will base on this value.
+    this.setSetting('Video', 'Base', DEFAULT_BASE_RESOLUTION);
 
     ipcMain.on('createOBSDisplay', (event, electronWindowId: number, name: string, sourceId: string) => event.returnValue = this.createOBSDisplay(electronWindowId, name, sourceId));
     ipcMain.on('moveOBSDisplay', (event, name: string, x: number, y: number) => event.returnValue = this.moveOBSDisplay(name, x, y));
@@ -48,23 +52,32 @@ export class ObsService {
     ipcMain.on('createOBSIOSurface', (event, name: string) => event.returnValue = this.createOBSIOSurface(name));
   }
 
-  public createSource(sourceId: string, url: string, mute: boolean, channel: number): void {
+  public createSource(sourceId: string, url: string, mute: boolean, channel: number): string {
+    const sceneId = uuid.v4();
+    const obsScene = obs.SceneFactory.create(sceneId);
+
     const obsSource = obs.InputFactory.create('ffmpeg_source', sourceId, {
       ...DEFAULT_SOURCE_SETTINGS,
       input: url,
     });
 
-    // Output Channel
-    obs.Global.setOutputSource(channel, obsSource);
+    // Output channel to receive audio output
+    obs.Global.setOutputSource(channel, obsScene);
+
+    const obsSceneItem = obsScene.add(obsSource);
+    this.scaleSceneItem(obsSceneItem);
 
     // Initialize audio
     obsSource.muted = mute;
     obsSource.monitoringType = mute ? obs.EMonitoringType.None : obs.EMonitoringType.MonitoringOnly;
 
+    // Set audio volume
     const obsFader = obs.FaderFactory.create(obs.EFaderType.IEC);
     obsFader.attach(obsSource);
     obsFader.mul = 1;
     obsFader.deflection = 1;
+
+    return sceneId;
   }
 
   public removeSource(sourceId: string): void {
@@ -75,7 +88,6 @@ export class ObsService {
   }
 
   public createOBSDisplay(electronWindowId: number, name: string, sourceId: string): void {
-    console.log(`createOBSDisplay: ${electronWindowId} ${name}`);
     const electronWindow = BrowserWindow.fromId(electronWindowId);
     obs.NodeObs.OBS_content_createSourcePreviewDisplay(
       electronWindow.getNativeWindowHandle(),
@@ -108,12 +120,15 @@ export class ObsService {
       obsTransition = obs.TransitionFactory.create(transitionType, transitionId);
       this.transitions.set(transitionType, obsTransition);
     }
+
     if (from) {
-      const fromObsScene = obs.SceneFactory.fromName(from.id);
-      obsTransition.set(fromObsScene);
+      const fromScene = obs.SceneFactory.fromName(from.sceneId);
+      obsTransition.set(fromScene);
     }
-    const toObsScene = obs.SceneFactory.fromName(to.id);
-    obsTransition.start(transitionDurationMs, toObsScene);
+
+    const toScene = obs.SceneFactory.fromName(to.sceneId);
+
+    obsTransition.start(transitionDurationMs, toScene);
     return {
       id: obsTransition.name,
       type: transitionType,
@@ -122,11 +137,54 @@ export class ObsService {
   }
 
   public muteSource(sourceId: string, mute: boolean) {
-    console.log(`mute source ${sourceId}: ${mute}`);
     const obsSource = obs.InputFactory.fromName(sourceId);
     if (obsSource) {
       obsSource.muted = mute;
       obsSource.monitoringType = mute ? EMonitoringType.None : EMonitoringType.MonitoringOnly;
     }
+  }
+
+  private setSetting(category: string, parameter: string, value: string) {
+    let oldValue: any = undefined;
+
+    const settings = obs.NodeObs.OBS_settings_getSettings(category).data as {
+      parameters: { name: string, currentValue: any }[],
+    }[];
+
+    settings.forEach(subCategory => {
+      subCategory.parameters.forEach(param => {
+        if (param.name === parameter) {
+          oldValue = param.currentValue;
+          param.currentValue = value;
+        }
+      });
+    });
+
+    if (value != oldValue) {
+      obs.NodeObs.OBS_settings_saveSettings(category, settings);
+    }
+  }
+
+  private scaleSceneItem(obsSceneItem: ISceneItem) {
+    const [width, height] = DEFAULT_BASE_RESOLUTION.split('x').map(s => Number(s));
+    // Calculate scale to stretch source to whole size, stream source will not get size immediately,
+    // try 10s to get the scale
+    let tryCount = 0;
+    let scale: number | undefined = undefined;
+    const tryGetScale: () => void = () => {
+      if (tryCount < 10 && scale === undefined) {
+        setTimeout(() => {
+          if (obsSceneItem.source.width && obsSceneItem.source.height) {
+            scale = Math.min(width / obsSceneItem.source.width, height / obsSceneItem.source.height);
+            obsSceneItem.scale = { x: scale, y: scale };
+          } else {
+            tryCount++;
+            tryGetScale();
+          }
+        }, 1000);
+      }
+    };
+
+    tryGetScale();
   }
 }
