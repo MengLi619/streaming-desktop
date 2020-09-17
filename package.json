@@ -17,7 +17,7 @@
     "server": "npm run build-main && env-cmd -f env/server.env concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "build:prod": "npm run build",
     "build-main:prod": "npm run build-main",
-    "prepackage": "rm -rf build && npm run build:prod && npm run build-main:prod",
+    "prepackage": "rm -rf build && npm run build:prod && npm run build-main:prod && cp env/server.env build",
     "package:windows": "npm run prepackage && rm -rf dist && electron-builder build -w --publish always",
     "package:mac": "npm run prepackage && rm -rf dist && electron-builder build -m --publish always"
   },
@@ -27,6 +27,7 @@
     "axios": "^0.19.2",
     "crash-handler": "https://slobs-crash-handler.s3-us-west-2.amazonaws.com/crash-handler-0.0.0.tar.gz",
     "cross-env": "^7.0.2",
+    "dotenv": "^8.2.0",
     "electron-is-dev": "^1.2.0",
     "electron-store": "^5.2.0",
     "env-cmd": "^10.1.0",

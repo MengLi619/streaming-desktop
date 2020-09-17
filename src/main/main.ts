@@ -1,8 +1,15 @@
 import 'reflect-metadata';
 import * as isDev from 'electron-is-dev';
+import * as path from 'path';
+import * as dotenv from 'dotenv';
+
+// TODO: load env from local path when in the production, remove this in the future
+if (!isDev) {
+  dotenv.config({ path: path.join(__dirname, '../server.env') });
+}
+
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { Container } from 'typedi';
-import * as path from 'path';
 import { SourceService } from './service/sourceService';
 
 const loadUrl = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../index.html')}`;
