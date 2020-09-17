@@ -5,6 +5,7 @@ export type Source = {
   previewUrl?: string;
   muted: boolean;
   sceneId: string;
+  channel?: number;
 }
 
 export enum TransitionType {

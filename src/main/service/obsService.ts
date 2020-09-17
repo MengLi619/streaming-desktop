@@ -52,32 +52,31 @@ export class ObsService {
     ipcMain.on('createOBSIOSurface', (event, name: string) => event.returnValue = this.createOBSIOSurface(name));
   }
 
-  public createSource(sourceId: string, url: string, mute: boolean, channel: number): string {
-    const sceneId = uuid.v4();
-    const obsScene = obs.SceneFactory.create(sceneId);
+  public createSource(source: Source): void {
+    const obsScene = obs.SceneFactory.create(source.sceneId);
 
-    const obsSource = obs.InputFactory.create('ffmpeg_source', sourceId, {
+    const obsSource = obs.InputFactory.create('ffmpeg_source', source.id, {
       ...DEFAULT_SOURCE_SETTINGS,
-      input: url,
+      input: source.url,
     });
 
     // Output channel to receive audio output
-    obs.Global.setOutputSource(channel, obsScene);
+    if (source.channel !== undefined) {
+      obs.Global.setOutputSource(source.channel, obsScene);
+    }
 
     const obsSceneItem = obsScene.add(obsSource);
     this.scaleSceneItem(obsSceneItem);
 
     // Initialize audio
-    obsSource.muted = mute;
-    obsSource.monitoringType = mute ? obs.EMonitoringType.None : obs.EMonitoringType.MonitoringOnly;
+    obsSource.muted = source.muted;
+    obsSource.monitoringType = source.muted ? obs.EMonitoringType.None : obs.EMonitoringType.MonitoringOnly;
 
     // Set audio volume
     const obsFader = obs.FaderFactory.create(obs.EFaderType.IEC);
     obsFader.attach(obsSource);
     obsFader.mul = 1;
     obsFader.deflection = 1;
-
-    return sceneId;
   }
 
   public removeSource(sourceId: string): void {
@@ -170,12 +169,11 @@ export class ObsService {
     // Calculate scale to stretch source to whole size, stream source will not get size immediately,
     // try 10s to get the scale
     let tryCount = 0;
-    let scale: number | undefined = undefined;
     const tryGetScale: () => void = () => {
-      if (tryCount < 10 && scale === undefined) {
+      if (tryCount < 10) {
         setTimeout(() => {
           if (obsSceneItem.source.width && obsSceneItem.source.height) {
-            scale = Math.min(width / obsSceneItem.source.width, height / obsSceneItem.source.height);
+            const scale = Math.min(width / obsSceneItem.source.width, height / obsSceneItem.source.height);
             obsSceneItem.scale = { x: scale, y: scale };
           } else {
             tryCount++;

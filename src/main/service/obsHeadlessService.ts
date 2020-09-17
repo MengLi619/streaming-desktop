@@ -40,7 +40,7 @@ export class ObsHeadlessService {
     this.sceneSetAsCurrent = promisify(this.studioClient.sceneSetAsCurrent).bind(this.studioClient) as (request: SceneSetAsCurrentRequest) => Promise<SceneSetAsCurrentResponse>;
   }
 
-  public async initialize(savedSources: Record<number, Source>): Promise<Source[]> {
+  public async initialize(): Promise<void> {
     const shows = (await this.studioGet(new Empty())).getStudio()?.getShowsList() || [];
     this.show = shows.find(s => s.getName() === OBS_SHOW_NAME);
     if (!this.show) {
@@ -55,58 +55,57 @@ export class ObsHeadlessService {
     } catch (error) {
       console.log(`Failed to start obs headless, maybe the show is already started.`);
     }
-
-    // Get current sources
-    const sources: Source[] = [];
-    for (const scene of this.show.getScenesList()) {
-      for (const source of scene.getSourcesList()) {
-        const savedSource = Object.values(savedSources).find(s => s.id === scene.getId());
-        sources.push({
-          id: scene.getId(),
-          name: source.getName(),
-          url: source.getUrl(),
-          previewUrl: savedSource && savedSource.previewUrl,
-          muted: true,
-          sceneId: '',
-        });
-      }
-    }
-    return sources;
   }
 
-  public async addSource(name: string, url: string): Promise<string> {
+  public async createSource(source: Source): Promise<void> {
     // Add scene
-    const sceneAddRequest = new SceneAddRequest();
-    sceneAddRequest.setShowId(this.show?.getId() as string);
-    sceneAddRequest.setSceneName(name);
-    const sceneId = (await this.sceneAdd(sceneAddRequest)).getScene()?.getId() as string;
+    if (!this.isSceneExisted(source.id)) {
+      const sceneAddRequest = new SceneAddRequest();
+      sceneAddRequest.setShowId(this.show?.getId() as string);
+      sceneAddRequest.setSceneName(source.name);
+      source.sceneId = (await this.sceneAdd(sceneAddRequest)).getScene()?.getId() as string;
+    }
 
     // Add source
-    const sourceAddRequest = new SourceAddRequest();
-    sourceAddRequest.setShowId(this.show?.getId() as string);
-    sourceAddRequest.setSceneId(sceneId);
-    sourceAddRequest.setSourceName(name);
-    sourceAddRequest.setSourceType('RTMP');
-    sourceAddRequest.setSourceUrl(url);
-    await this.sourceAdd(sourceAddRequest);
-
-    // Return created source
-    return sceneId;
+    if (!this.isSourceExisted(source.id)) {
+      const sourceAddRequest = new SourceAddRequest();
+      sourceAddRequest.setShowId(this.show?.getId() as string);
+      sourceAddRequest.setSceneId(source.sceneId);
+      sourceAddRequest.setSourceName(source.name);
+      sourceAddRequest.setSourceType('RTMP');
+      sourceAddRequest.setSourceUrl(source.url);
+      source.id = this.getLocalSourceId(source.sceneId, (await this.sourceAdd(sourceAddRequest)).getSource()?.getId() as string);
+    }
   };
 
-  public async removeSource(source: Source) {
+  public async removeSource(source: Source): Promise<void> {
     const request = new SceneRemoveRequest();
     request.setShowId(this.show?.getId() as string);
-    request.setSceneId(source.id as string);
+    request.setSceneId(source.sceneId as string);
     await this.sceneRemove(request);
   }
 
   public async switchSource(source: Source, transitionType: string, transitionDurationMs: number) {
     const request = new SceneSetAsCurrentRequest();
     request.setShowId(this.show?.getId() as string);
-    request.setSceneId(source.id);
+    request.setSceneId(source.sceneId);
     request.setTransitionType(transitionType);
     request.setTransitionDurationMs(transitionDurationMs);
     await this.sceneSetAsCurrent(request);
+  }
+
+  private isSceneExisted(sceneId: string): boolean {
+    return (this.show?.getScenesList() || []).some(scene => scene.getId() === sceneId);
+  }
+
+  private isSourceExisted(sourceId: string): boolean {
+    return (this.show?.getScenesList() || []).some(scene =>
+      (scene.getSourcesList() || []).some(source => this.getLocalSourceId(scene.getId(), source.getId()) === sourceId));
+  }
+
+  // noinspection JSMethodCanBeStatic
+  private getLocalSourceId(serverSceneId: string, serverSourceId: string) {
+    // Server source id maybe same for different scene, concat server scene id and server source id for local source id.
+    return `${serverSceneId}_${serverSourceId}`;
   }
 }
