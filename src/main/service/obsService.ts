@@ -57,7 +57,7 @@ export class ObsService {
 
     const obsSource = obs.InputFactory.create('ffmpeg_source', source.id, {
       ...DEFAULT_SOURCE_SETTINGS,
-      input: source.url,
+      input: source.previewUrl,
     });
 
     // Output channel to receive audio output
