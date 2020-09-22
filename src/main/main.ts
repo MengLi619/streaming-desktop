@@ -11,9 +11,11 @@ if (!isDev) {
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { Container } from 'typedi';
 import { SourceService } from './service/sourceService';
+import { AtemService } from './service/atemService';
 
 const loadUrl = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../index.html')}`;
 const sourceService = Container.get(SourceService);
+const atemService = Container.get(AtemService);
 
 let mainWindow: BrowserWindow | undefined;
 let dialogWindow: BrowserWindow | undefined;
@@ -21,6 +23,7 @@ let externalWindow: BrowserWindow | undefined;
 
 async function startApp() {
   await sourceService.initialize();
+  await atemService.initialize();
 
   // Main window
   mainWindow = new BrowserWindow({
