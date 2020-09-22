@@ -13,7 +13,7 @@ export class AtemService {
     this.atem = new Atem();
   }
 
-  public async initialize(): Promise<void> {
+  public async initialize(deviceIp: string): Promise<void> {
     this.atem.on('connectionStateChange', (state: any) => {
       console.log(`Atem connectionStateChange ${state}`);
     });
@@ -33,5 +33,9 @@ export class AtemService {
         this.sourceService.take(source, TransitionType.Cut, 0);
       }
     });
+
+    this.atem.ip = deviceIp;
+    this.atem.connect();
+    console.log(`Connect atem device ${deviceIp}`);
   }
 }
