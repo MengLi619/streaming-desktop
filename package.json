@@ -24,6 +24,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.14.0",
     "@grpc/proto-loader": "^0.5.5",
+    "atem": "^0.1.8",
     "axios": "^0.19.2",
     "crash-handler": "https://slobs-crash-handler.s3-us-west-2.amazonaws.com/crash-handler-0.0.0.tar.gz",
     "cross-env": "^7.0.2",

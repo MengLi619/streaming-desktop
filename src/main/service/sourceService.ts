@@ -14,7 +14,7 @@ export class SourceService {
   private readonly obsHeadlessService: ObsHeadlessService = Container.get(ObsHeadlessService);
   private readonly storageService: StorageService = Container.get(StorageService);
 
-  private sources: Record<number, Source> = {};
+  public sources: Record<number, Source> = {};
   private previewSource?: Source;
   private programTransition?: Transition;
   private liveSource?: Source;

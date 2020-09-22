@@ -11,9 +11,12 @@ if (!isDev) {
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { Container } from 'typedi';
 import { SourceService } from './service/sourceService';
+import { AtemService } from './service/atemService';
+import { ATEM_DEVICE_IP, ENABLE_ATEM } from '../common/constant';
 
 const loadUrl = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../index.html')}`;
 const sourceService = Container.get(SourceService);
+const atemService = Container.get(AtemService);
 
 let mainWindow: BrowserWindow | undefined;
 let dialogWindow: BrowserWindow | undefined;
@@ -21,6 +24,9 @@ let externalWindow: BrowserWindow | undefined;
 
 async function startApp() {
   await sourceService.initialize();
+  if (ENABLE_ATEM) {
+    await atemService.initialize(ATEM_DEVICE_IP);
+  }
 
   // Main window
   mainWindow = new BrowserWindow({
