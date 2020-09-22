@@ -59,7 +59,7 @@ export class ObsHeadlessService {
 
   public async createSource(source: Source): Promise<void> {
     // Add scene
-    if (!this.isSceneExisted(source.id)) {
+    if (!this.isSceneExisted(source.sceneId)) {
       const sceneAddRequest = new SceneAddRequest();
       sceneAddRequest.setShowId(this.show?.getId() as string);
       sceneAddRequest.setSceneName(source.name);
