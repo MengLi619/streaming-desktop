@@ -66,7 +66,7 @@ export class ObsService {
     }
 
     const obsSceneItem = obsScene.add(obsSource);
-    this.scaleSceneItem(obsSceneItem, source);
+    this.scaleSceneItem(obsSceneItem);
 
     // Initialize audio
     obsSource.muted = source.muted;
@@ -164,7 +164,7 @@ export class ObsService {
     }
   }
 
-  private scaleSceneItem(obsSceneItem: ISceneItem, source: Source) {
+  private scaleSceneItem(obsSceneItem: ISceneItem) {
     const [width, height] = DEFAULT_BASE_RESOLUTION.split('x').map(s => Number(s));
     // Calculate scale to stretch source to whole size, stream source will not get size immediately,
     const tryGetScale: () => void = () => {
