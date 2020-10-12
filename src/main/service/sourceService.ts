@@ -22,13 +22,10 @@ export class SourceService {
   public async initialize() {
     // Initialize local obs
     this.obsService.initialize();
-    await this.obsHeadlessService.initialize();
+    this.sources = await this.obsHeadlessService.initialize();
 
-    // Load and create sources
-    this.sources = this.storageService.loadSources();
-    console.log(`load sources: ${JSON.stringify(this.sources)}`);
+    // Create sources for local obs
     for (const source of Object.values(this.sources)) {
-      await this.obsHeadlessService.createSource(source);
       this.obsService.createSource(source);
     }
 
@@ -37,9 +34,6 @@ export class SourceService {
     if (outputUrl) {
       this.updateLiveUrl(outputUrl);
     }
-
-    // Save sources again, source id maybe changed after initialized.
-    this.storageService.saveSources(this.sources);
 
     ipcMain.on('updateSource', (event, index: number, name: string, url: string, previewUrl: string) => this.updateSource(index, name, url, previewUrl));
     ipcMain.on('removeSource', (event, index: number) => this.removeSource(index));

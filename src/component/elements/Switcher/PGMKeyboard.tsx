@@ -7,7 +7,7 @@ import { Transition } from '../../../types/obs';
 
 const keyNames = [
   '1', '2', '3', '4', '5', '6', '7', '8', '9',
-  '10', 'CG', 'DDR', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'
+  '10', '11', '12', 'CG', 'DDR', 'M1', 'M2', 'M3', 'M4'
 ];
 
 export class PGMKeyboardState {

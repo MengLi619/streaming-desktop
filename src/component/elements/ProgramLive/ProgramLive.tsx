@@ -47,7 +47,7 @@ export class ProgramLive extends React.Component<{}, ProgramLiveState> {
             {
               this.state.liveSource &&
               <Display
-                key={this.state.liveSource.id}
+                key={this.state.liveSource.url}
                 sourceId={this.state.liveSource.id}
               />
             }

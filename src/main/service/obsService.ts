@@ -167,20 +167,15 @@ export class ObsService {
   private scaleSceneItem(obsSceneItem: ISceneItem) {
     const [width, height] = DEFAULT_BASE_RESOLUTION.split('x').map(s => Number(s));
     // Calculate scale to stretch source to whole size, stream source will not get size immediately,
-    // try 10s to get the scale
-    let tryCount = 0;
     const tryGetScale: () => void = () => {
-      if (tryCount < 10) {
-        setTimeout(() => {
-          if (obsSceneItem.source.width && obsSceneItem.source.height) {
-            const scale = Math.min(width / obsSceneItem.source.width, height / obsSceneItem.source.height);
-            obsSceneItem.scale = { x: scale, y: scale };
-          } else {
-            tryCount++;
-            tryGetScale();
-          }
-        }, 1000);
-      }
+      setTimeout(() => {
+        if (obsSceneItem.source.width && obsSceneItem.source.height) {
+          const scale = Math.min(width / obsSceneItem.source.width, height / obsSceneItem.source.height);
+          obsSceneItem.scale = { x: scale, y: scale };
+        } else {
+          tryGetScale();
+        }
+      }, 1000);
     };
 
     tryGetScale();

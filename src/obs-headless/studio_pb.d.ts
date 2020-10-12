@@ -117,6 +117,9 @@ export class Source extends jspb.Message {
     getUrl(): string;
     setUrl(value: string): Source;
 
+    getPreviewUrl(): string;
+    setPreviewUrl(value: string): Source;
+
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Source.AsObject;
@@ -134,6 +137,7 @@ export namespace Source {
         name: string,
         type: string,
         url: string,
+        previewUrl: string,
     }
 }
 
@@ -441,6 +445,9 @@ export class SourceAddRequest extends jspb.Message {
     getSourceUrl(): string;
     setSourceUrl(value: string): SourceAddRequest;
 
+    getSourcePreviewUrl(): string;
+    setSourcePreviewUrl(value: string): SourceAddRequest;
+
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): SourceAddRequest.AsObject;
@@ -459,6 +466,7 @@ export namespace SourceAddRequest {
         sourceName: string,
         sourceType: string,
         sourceUrl: string,
+        sourcePreviewUrl: string,
     }
 }
 
@@ -868,10 +876,10 @@ export namespace SourceAddResponse {
 
 export class SourceDuplicateResponse extends jspb.Message { 
 
-    hasSourcer(): boolean;
-    clearSourcer(): void;
-    getSourcer(): Source | undefined;
-    setSourcer(value?: Source): SourceDuplicateResponse;
+    hasSource(): boolean;
+    clearSource(): void;
+    getSource(): Source | undefined;
+    setSource(value?: Source): SourceDuplicateResponse;
 
 
     serializeBinary(): Uint8Array;
@@ -886,7 +894,7 @@ export class SourceDuplicateResponse extends jspb.Message {
 
 export namespace SourceDuplicateResponse {
     export type AsObject = {
-        sourcer?: Source.AsObject,
+        source?: Source.AsObject,
     }
 }
 

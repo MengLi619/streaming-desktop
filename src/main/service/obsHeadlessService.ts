@@ -2,7 +2,7 @@ import { Service } from 'typedi';
 import { StudioClient } from '../../obs-headless/studio_grpc_pb';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 import { SceneAddRequest, SceneAddResponse, SceneRemoveRequest, SceneSetAsCurrentRequest, SceneSetAsCurrentResponse, Show, ShowCreateRequest, ShowCreateResponse, SourceAddRequest, SourceAddResponse, StudioGetResponse } from '../../obs-headless/studio_pb';
-import { OBS_SERVER_URL, OBS_SHOW_NAME } from '../../common/constant';
+import { OBS_SERVER_URL, SHOW_NAME } from '../../common/constant';
 import { credentials } from 'grpc';
 import { promisify } from 'util';
 import { Source } from '../../types/obs';
@@ -40,21 +40,28 @@ export class ObsHeadlessService {
     this.sceneSetAsCurrent = promisify(this.studioClient.sceneSetAsCurrent).bind(this.studioClient) as (request: SceneSetAsCurrentRequest) => Promise<SceneSetAsCurrentResponse>;
   }
 
-  public async initialize(): Promise<void> {
+  public async initialize(): Promise<Record<number, Source>> {
     const shows = (await this.studioGet(new Empty())).getStudio()?.getShowsList() || [];
-    this.show = shows.find(s => s.getName() === OBS_SHOW_NAME);
+    this.show = shows.find(s => s.getName() === SHOW_NAME);
     if (!this.show) {
-      const request = new ShowCreateRequest();
-      request.setShowName(OBS_SHOW_NAME);
-      this.show = (await this.showCreate(request)).getShow() as Show;
+      throw new Error(`Can't find show ${SHOW_NAME}`);
     }
-
-    // start show
-    try {
-      await this.studioStart(new Empty());
-    } catch (error) {
-      console.log(`Failed to start obs headless, maybe the show is already started.`);
-    }
+    const sources: Record<number, Source> = {};
+    let index = 0;
+    this.show.getScenesList().forEach(scene => {
+      scene.getSourcesList().forEach(source => {
+        sources[index++] = {
+          id: this.getLocalSourceId(scene.getId(), source.getId()),
+          name: source.getName(),
+          url: source.getUrl(),
+          previewUrl: source.getPreviewUrl(),
+          muted: true,
+          sceneId: scene.getId(),
+          channel: index,
+        };
+      })
+    });
+    return sources;
   }
 
   public async createSource(source: Source): Promise<void> {
