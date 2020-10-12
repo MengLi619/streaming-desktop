@@ -1,4 +1,3 @@
-/* eslint-disable */
 // source: studio.proto
 /**
  * @fileoverview
@@ -1532,7 +1531,8 @@ proto.proto.Source.toObject = function(includeInstance, msg) {
     id: jspb.Message.getFieldWithDefault(msg, 1, ""),
     name: jspb.Message.getFieldWithDefault(msg, 2, ""),
     type: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    url: jspb.Message.getFieldWithDefault(msg, 4, "")
+    url: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    previewUrl: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -1584,6 +1584,10 @@ proto.proto.Source.deserializeBinaryFromReader = function(msg, reader) {
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setUrl(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPreviewUrl(value);
       break;
     default:
       reader.skipField();
@@ -1639,6 +1643,13 @@ proto.proto.Source.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       4,
+      f
+    );
+  }
+  f = message.getPreviewUrl();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
       f
     );
   }
@@ -1714,6 +1725,24 @@ proto.proto.Source.prototype.getUrl = function() {
  */
 proto.proto.Source.prototype.setUrl = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional string preview_url = 5;
+ * @return {string}
+ */
+proto.proto.Source.prototype.getPreviewUrl = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.proto.Source} returns this
+ */
+proto.proto.Source.prototype.setPreviewUrl = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
@@ -3583,7 +3612,8 @@ proto.proto.SourceAddRequest.toObject = function(includeInstance, msg) {
     sceneId: jspb.Message.getFieldWithDefault(msg, 2, ""),
     sourceName: jspb.Message.getFieldWithDefault(msg, 3, ""),
     sourceType: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    sourceUrl: jspb.Message.getFieldWithDefault(msg, 5, "")
+    sourceUrl: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    sourcePreviewUrl: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
   if (includeInstance) {
@@ -3639,6 +3669,10 @@ proto.proto.SourceAddRequest.deserializeBinaryFromReader = function(msg, reader)
     case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.setSourceUrl(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSourcePreviewUrl(value);
       break;
     default:
       reader.skipField();
@@ -3701,6 +3735,13 @@ proto.proto.SourceAddRequest.serializeBinaryToWriter = function(message, writer)
   if (f.length > 0) {
     writer.writeString(
       5,
+      f
+    );
+  }
+  f = message.getSourcePreviewUrl();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
       f
     );
   }
@@ -3794,6 +3835,24 @@ proto.proto.SourceAddRequest.prototype.getSourceUrl = function() {
  */
 proto.proto.SourceAddRequest.prototype.setSourceUrl = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional string source_preview_url = 6;
+ * @return {string}
+ */
+proto.proto.SourceAddRequest.prototype.getSourcePreviewUrl = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.proto.SourceAddRequest} returns this
+ */
+proto.proto.SourceAddRequest.prototype.setSourcePreviewUrl = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
@@ -6401,7 +6460,7 @@ proto.proto.SourceDuplicateResponse.prototype.toObject = function(opt_includeIns
  */
 proto.proto.SourceDuplicateResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    sourcer: (f = msg.getSourcer()) && proto.proto.Source.toObject(includeInstance, f)
+    source: (f = msg.getSource()) && proto.proto.Source.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -6441,7 +6500,7 @@ proto.proto.SourceDuplicateResponse.deserializeBinaryFromReader = function(msg, 
     case 1:
       var value = new proto.proto.Source;
       reader.readMessage(value,proto.proto.Source.deserializeBinaryFromReader);
-      msg.setSourcer(value);
+      msg.setSource(value);
       break;
     default:
       reader.skipField();
@@ -6472,7 +6531,7 @@ proto.proto.SourceDuplicateResponse.prototype.serializeBinary = function() {
  */
 proto.proto.SourceDuplicateResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getSourcer();
+  f = message.getSource();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -6484,10 +6543,10 @@ proto.proto.SourceDuplicateResponse.serializeBinaryToWriter = function(message, 
 
 
 /**
- * optional Source sourcer = 1;
+ * optional Source source = 1;
  * @return {?proto.proto.Source}
  */
-proto.proto.SourceDuplicateResponse.prototype.getSourcer = function() {
+proto.proto.SourceDuplicateResponse.prototype.getSource = function() {
   return /** @type{?proto.proto.Source} */ (
     jspb.Message.getWrapperField(this, proto.proto.Source, 1));
 };
@@ -6497,7 +6556,7 @@ proto.proto.SourceDuplicateResponse.prototype.getSourcer = function() {
  * @param {?proto.proto.Source|undefined} value
  * @return {!proto.proto.SourceDuplicateResponse} returns this
 */
-proto.proto.SourceDuplicateResponse.prototype.setSourcer = function(value) {
+proto.proto.SourceDuplicateResponse.prototype.setSource = function(value) {
   return jspb.Message.setWrapperField(this, 1, value);
 };
 
@@ -6506,8 +6565,8 @@ proto.proto.SourceDuplicateResponse.prototype.setSourcer = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.proto.SourceDuplicateResponse} returns this
  */
-proto.proto.SourceDuplicateResponse.prototype.clearSourcer = function() {
-  return this.setSourcer(undefined);
+proto.proto.SourceDuplicateResponse.prototype.clearSource = function() {
+  return this.setSource(undefined);
 };
 
 
@@ -6515,7 +6574,7 @@ proto.proto.SourceDuplicateResponse.prototype.clearSourcer = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.proto.SourceDuplicateResponse.prototype.hasSourcer = function() {
+proto.proto.SourceDuplicateResponse.prototype.hasSource = function() {
   return jspb.Message.getField(this, 1) != null;
 };
 
