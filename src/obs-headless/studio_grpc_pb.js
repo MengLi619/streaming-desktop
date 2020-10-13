@@ -324,6 +324,17 @@ function deserialize_proto_SourceRemoveRequest(buffer_arg) {
   return studio_pb.SourceRemoveRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_proto_SourceRestartRequest(arg) {
+  if (!(arg instanceof studio_pb.SourceRestartRequest)) {
+    throw new Error('Expected argument of type proto.SourceRestartRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_proto_SourceRestartRequest(buffer_arg) {
+  return studio_pb.SourceRestartRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_proto_SourceSetPropertiesRequest(arg) {
   if (!(arg instanceof studio_pb.SourceSetPropertiesRequest)) {
     throw new Error('Expected argument of type proto.SourceSetPropertiesRequest');
@@ -576,6 +587,17 @@ sourceGet: {
     requestDeserialize: deserialize_proto_SourceSetPropertiesRequest,
     responseSerialize: serialize_proto_SourceSetPropertiesResponse,
     responseDeserialize: deserialize_proto_SourceSetPropertiesResponse,
+  },
+  sourceRestart: {
+    path: '/proto.Studio/SourceRestart',
+    requestStream: false,
+    responseStream: false,
+    requestType: studio_pb.SourceRestartRequest,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_proto_SourceRestartRequest,
+    requestDeserialize: deserialize_proto_SourceRestartRequest,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
   },
   health: {
     path: '/proto.Studio/Health',

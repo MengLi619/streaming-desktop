@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { StudioClient } from '../../obs-headless/studio_grpc_pb';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
-import { SceneAddRequest, SceneAddResponse, SceneRemoveRequest, SceneSetAsCurrentRequest, SceneSetAsCurrentResponse, Show, ShowCreateRequest, ShowCreateResponse, SourceAddRequest, SourceAddResponse, StudioGetResponse } from '../../obs-headless/studio_pb';
+import { SceneAddRequest, SceneAddResponse, SceneRemoveRequest, SceneSetAsCurrentRequest, SceneSetAsCurrentResponse, Show, ShowCreateRequest, ShowCreateResponse, SourceAddRequest, SourceAddResponse, SourceRestartRequest, StudioGetResponse } from '../../obs-headless/studio_pb';
 import { OBS_SERVER_URL, SHOW_NAME } from '../../common/constant';
 import { credentials } from 'grpc';
 import { promisify } from 'util';
@@ -17,6 +17,7 @@ export class ObsHeadlessService {
   private readonly sourceAdd: (request: SourceAddRequest) => Promise<SourceAddResponse>;
   private readonly sceneRemove: (request: SceneRemoveRequest) => Promise<Empty>;
   private readonly sceneSetAsCurrent: (request: SceneSetAsCurrentRequest) => Promise<SceneSetAsCurrentResponse>;
+  private readonly sourceRestart: (request: SourceRestartRequest) => Promise<Empty>;
 
   private show?: Show;
 
@@ -38,6 +39,7 @@ export class ObsHeadlessService {
     this.sourceAdd = promisify(this.studioClient.sourceAdd).bind(this.studioClient) as (request: SourceAddRequest) => Promise<SourceAddResponse>;
     this.sceneRemove = promisify(this.studioClient.sceneRemove).bind(this.studioClient) as (request: SceneRemoveRequest) => Promise<Empty>;
     this.sceneSetAsCurrent = promisify(this.studioClient.sceneSetAsCurrent).bind(this.studioClient) as (request: SceneSetAsCurrentRequest) => Promise<SceneSetAsCurrentResponse>;
+    this.sourceRestart = promisify(this.studioClient.sourceRestart).bind(this.studioClient) as (request: SourceRestartRequest) => Promise<Empty>;
   }
 
   public async initialize(): Promise<Record<number, Source>> {
@@ -101,6 +103,14 @@ export class ObsHeadlessService {
     await this.sceneSetAsCurrent(request);
   }
 
+  public async restart(source: Source): Promise<void> {
+    const request = new SourceRestartRequest();
+    request.setShowId(this.show?.getId() as string);
+    request.setSceneId(source.sceneId);
+    request.setSourceId(this.getRemoteSourceId(source));
+    await this.sourceRestart(request);
+  }
+
   private isSceneExisted(sceneId: string): boolean {
     return (this.show?.getScenesList() || []).some(scene => scene.getId() === sceneId);
   }
@@ -114,5 +124,10 @@ export class ObsHeadlessService {
   private getLocalSourceId(serverSceneId: string, serverSourceId: string) {
     // Server source id maybe same for different scene, concat server scene id and server source id for local source id.
     return `${serverSceneId}_${serverSourceId}`;
+  }
+
+  // noinspection JSMethodCanBeStatic
+  private getRemoteSourceId(source: Source) {
+    return source.id.replace(`${source.sceneId}_`, '');
   }
 }
