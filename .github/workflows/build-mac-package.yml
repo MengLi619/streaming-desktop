@@ -1,0 +1,27 @@
+name: build-mac-package
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  PUBLISH_BUCKET: ${{ secrets.PUBLISH_BUCKET }}
+  PUBLISH_REGION: ${{ secrets.PUBLISH_REGION }}
+  PUBLISH_ACCESS_KEY_ID: ${{ secrets.PUBLISH_ACCESS_KEY_ID }}
+  PUBLISH_ACCESS_KEY_SECRET: ${{ secrets.PUBLISH_ACCESS_KEY_SECRET }}
+
+jobs:
+  build:
+    env:
+      PUBLISH_FILE_EXT: dmg
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Npm install
+        run: npm ci
+
+      - name: Build and publish mac package
+        run: npm run package:mac
+        shell: bash

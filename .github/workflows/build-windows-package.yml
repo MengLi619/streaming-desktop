@@ -1,4 +1,4 @@
-name: streaming-desktop-cicd
+name: build-windows-package
 
 on:
   push:
@@ -11,7 +11,7 @@ env:
   PUBLISH_ACCESS_KEY_SECRET: ${{ secrets.PUBLISH_ACCESS_KEY_SECRET }}
 
 jobs:
-  build_windows_package:
+  build:
     env:
       PUBLISH_FILE_EXT: exe
     runs-on: windows-latest
