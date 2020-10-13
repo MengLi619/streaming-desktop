@@ -52,6 +52,7 @@ export class SourceView extends React.Component<SourceViewProps, SourceViewState
           {
             !this.props.hideSetting &&
             <>
+              <i className="icon-reset icon-button" onClick={() => this.onRestartClicked()} />
               <i className={`${!this.state.source || this.state.source.muted ? 'icon-mute' : 'icon-audio'} icon-button`} onClick={() => this.onMuteClicked()} />
               {/*<i className="icon-subtract icon-button" onClick={() => this.onRemoveClicked()} />*/}
               {/*<i className="icon-settings icon-button" onClick={() => this.onSettingsClicked()} />*/}
@@ -85,6 +86,12 @@ export class SourceView extends React.Component<SourceViewProps, SourceViewState
   private onMuteClicked() {
     if (this.state.source) {
       this.sourceService.muteSource(this.state.source, !this.state.source.muted);
+    }
+  }
+
+  private onRestartClicked() {
+    if (this.state.source) {
+      this.sourceService.restart(this.state.source);
     }
   }
 }

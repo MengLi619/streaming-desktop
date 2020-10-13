@@ -565,6 +565,35 @@ export namespace SourceSetPropertiesRequest {
     }
 }
 
+export class SourceRestartRequest extends jspb.Message { 
+    getShowId(): string;
+    setShowId(value: string): SourceRestartRequest;
+
+    getSceneId(): string;
+    setSceneId(value: string): SourceRestartRequest;
+
+    getSourceId(): string;
+    setSourceId(value: string): SourceRestartRequest;
+
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SourceRestartRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: SourceRestartRequest): SourceRestartRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SourceRestartRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SourceRestartRequest;
+    static deserializeBinaryFromReader(message: SourceRestartRequest, reader: jspb.BinaryReader): SourceRestartRequest;
+}
+
+export namespace SourceRestartRequest {
+    export type AsObject = {
+        showId: string,
+        sceneId: string,
+        sourceId: string,
+    }
+}
+
 export class StudioGetResponse extends jspb.Message { 
 
     hasStudio(): boolean;
