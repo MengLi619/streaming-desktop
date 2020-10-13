@@ -28,6 +28,7 @@ interface IStudioService extends grpc.ServiceDefinition<grpc.UntypedServiceImple
     sourceDuplicate: IStudioService_ISourceDuplicate;
     sourceRemove: IStudioService_ISourceRemove;
     sourceSetProperties: IStudioService_ISourceSetProperties;
+    sourceRestart: IStudioService_ISourceRestart;
     health: IStudioService_IHealth;
 }
 
@@ -202,6 +203,15 @@ interface IStudioService_ISourceSetProperties extends grpc.MethodDefinition<stud
     responseSerialize: grpc.serialize<studio_pb.SourceSetPropertiesResponse>;
     responseDeserialize: grpc.deserialize<studio_pb.SourceSetPropertiesResponse>;
 }
+interface IStudioService_ISourceRestart extends grpc.MethodDefinition<studio_pb.SourceRestartRequest, google_protobuf_empty_pb.Empty> {
+    path: string; // "/proto.Studio/SourceRestart"
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<studio_pb.SourceRestartRequest>;
+    requestDeserialize: grpc.deserialize<studio_pb.SourceRestartRequest>;
+    responseSerialize: grpc.serialize<google_protobuf_empty_pb.Empty>;
+    responseDeserialize: grpc.deserialize<google_protobuf_empty_pb.Empty>;
+}
 interface IStudioService_IHealth extends grpc.MethodDefinition<google_protobuf_empty_pb.Empty, studio_pb.HealthResponse> {
     path: string; // "/proto.Studio/Health"
     requestStream: false;
@@ -234,6 +244,7 @@ export interface IStudioServer {
     sourceDuplicate: grpc.handleUnaryCall<studio_pb.SourceDuplicateRequest, studio_pb.SourceDuplicateResponse>;
     sourceRemove: grpc.handleUnaryCall<studio_pb.SourceRemoveRequest, google_protobuf_empty_pb.Empty>;
     sourceSetProperties: grpc.handleUnaryCall<studio_pb.SourceSetPropertiesRequest, studio_pb.SourceSetPropertiesResponse>;
+    sourceRestart: grpc.handleUnaryCall<studio_pb.SourceRestartRequest, google_protobuf_empty_pb.Empty>;
     health: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, studio_pb.HealthResponse>;
 }
 
@@ -295,6 +306,9 @@ export interface IStudioClient {
     sourceSetProperties(request: studio_pb.SourceSetPropertiesRequest, callback: (error: grpc.ServiceError | null, response: studio_pb.SourceSetPropertiesResponse) => void): grpc.ClientUnaryCall;
     sourceSetProperties(request: studio_pb.SourceSetPropertiesRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: studio_pb.SourceSetPropertiesResponse) => void): grpc.ClientUnaryCall;
     sourceSetProperties(request: studio_pb.SourceSetPropertiesRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: studio_pb.SourceSetPropertiesResponse) => void): grpc.ClientUnaryCall;
+    sourceRestart(request: studio_pb.SourceRestartRequest, callback: (error: grpc.ServiceError | null, response: google_protobuf_empty_pb.Empty) => void): grpc.ClientUnaryCall;
+    sourceRestart(request: studio_pb.SourceRestartRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: google_protobuf_empty_pb.Empty) => void): grpc.ClientUnaryCall;
+    sourceRestart(request: studio_pb.SourceRestartRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: google_protobuf_empty_pb.Empty) => void): grpc.ClientUnaryCall;
     health(request: google_protobuf_empty_pb.Empty, callback: (error: grpc.ServiceError | null, response: studio_pb.HealthResponse) => void): grpc.ClientUnaryCall;
     health(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: studio_pb.HealthResponse) => void): grpc.ClientUnaryCall;
     health(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: studio_pb.HealthResponse) => void): grpc.ClientUnaryCall;
@@ -359,6 +373,9 @@ export class StudioClient extends grpc.Client implements IStudioClient {
     public sourceSetProperties(request: studio_pb.SourceSetPropertiesRequest, callback: (error: grpc.ServiceError | null, response: studio_pb.SourceSetPropertiesResponse) => void): grpc.ClientUnaryCall;
     public sourceSetProperties(request: studio_pb.SourceSetPropertiesRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: studio_pb.SourceSetPropertiesResponse) => void): grpc.ClientUnaryCall;
     public sourceSetProperties(request: studio_pb.SourceSetPropertiesRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: studio_pb.SourceSetPropertiesResponse) => void): grpc.ClientUnaryCall;
+    public sourceRestart(request: studio_pb.SourceRestartRequest, callback: (error: grpc.ServiceError | null, response: google_protobuf_empty_pb.Empty) => void): grpc.ClientUnaryCall;
+    public sourceRestart(request: studio_pb.SourceRestartRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: google_protobuf_empty_pb.Empty) => void): grpc.ClientUnaryCall;
+    public sourceRestart(request: studio_pb.SourceRestartRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: google_protobuf_empty_pb.Empty) => void): grpc.ClientUnaryCall;
     public health(request: google_protobuf_empty_pb.Empty, callback: (error: grpc.ServiceError | null, response: studio_pb.HealthResponse) => void): grpc.ClientUnaryCall;
     public health(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: studio_pb.HealthResponse) => void): grpc.ClientUnaryCall;
     public health(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: studio_pb.HealthResponse) => void): grpc.ClientUnaryCall;

@@ -54,7 +54,6 @@ export class ObsService {
 
   public createSource(source: Source): void {
     const obsScene = obs.SceneFactory.create(source.sceneId);
-
     const obsSource = obs.InputFactory.create('ffmpeg_source', source.id, {
       ...DEFAULT_SOURCE_SETTINGS,
       input: source.previewUrl,
@@ -79,10 +78,16 @@ export class ObsService {
     obsFader.deflection = 1;
   }
 
-  public removeSource(sourceId: string): void {
-    const obsSource = obs.InputFactory.fromName(sourceId);
+  public removeSource(source: Source): void {
+    const obsSource = obs.InputFactory.fromName(source.id);
     if (obsSource) {
+      obsSource.remove();
       obsSource.release();
+    }
+    const obsScene = obs.SceneFactory.create(source.sceneId);
+    if (obsScene) {
+      obsScene.remove();
+      obsScene.release();
     }
   }
 
@@ -141,6 +146,18 @@ export class ObsService {
       obsSource.muted = mute;
       obsSource.monitoringType = mute ? EMonitoringType.None : EMonitoringType.MonitoringOnly;
     }
+  }
+
+  public restart(source: Source) {
+    const obsSource = obs.InputFactory.fromName(source.id);
+    obsSource.update({ url: '' });
+    obsSource.update({ url: source.previewUrl });
+  }
+
+  public close() {
+    obs.NodeObs.RemoveSourceCallback();
+    obs.NodeObs.OBS_service_removeCallback();
+    obs.IPC.disconnect();
   }
 
   private setSetting(category: string, parameter: string, value: string) {

@@ -13,10 +13,12 @@ import { Container } from 'typedi';
 import { SourceService } from './service/sourceService';
 import { AtemService } from './service/atemService';
 import { ATEM_DEVICE_IP, ENABLE_ATEM } from '../common/constant';
+import { ObsService } from './service/obsService';
 
 const loadUrl = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../index.html')}`;
 const sourceService = Container.get(SourceService);
 const atemService = Container.get(AtemService);
+const obsService = Container.get(ObsService);
 
 let mainWindow: BrowserWindow | undefined;
 let dialogWindow: BrowserWindow | undefined;
@@ -39,6 +41,7 @@ async function startApp() {
   mainWindow.removeMenu();
   mainWindow.loadURL(`${loadUrl}?window=main`);
   mainWindow.on('closed', () => {
+    obsService.close();
     app.exit(0);
   });
 
@@ -121,5 +124,5 @@ ipcMain.on('showExternalWindow', () => {
 
 // Exit
 ipcMain.on('exit', () => {
-  app.exit(0);
+  mainWindow?.close();
 });

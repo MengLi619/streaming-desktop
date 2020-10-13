@@ -41,6 +41,7 @@ export class SourceService {
     ipcMain.on('take', (event, source: Source, transitionType: TransitionType, transitionDurationMs: number) => this.take(source, transitionType, transitionDurationMs));
     ipcMain.on('updateLiveUrl', (event, url: string) => this.updateLiveUrl(url));
     ipcMain.on('muteSource', (event, source: Source, mute: boolean) => this.muteSource(source, mute));
+    ipcMain.on('restart', (event, source: Source) => this.restart(source));
 
     ipcMain.on('getSources', event => event.returnValue = this.sources);
     ipcMain.on('getPreviewSource', event => event.returnValue = this.previewSource);
@@ -52,7 +53,7 @@ export class SourceService {
     const source = this.sources[index];
     if (source) {
       await this.obsHeadlessService.removeSource(source);
-      this.obsService.removeSource(source.id);
+      this.obsService.removeSource(source);
     }
 
     this.sources[index] = {
@@ -75,7 +76,7 @@ export class SourceService {
     const source = this.sources[index];
     if (source) {
       await this.obsHeadlessService.removeSource(source);
-      await this.obsService.removeSource(source.id);
+      await this.obsService.removeSource(source);
     }
     delete this.sources[index];
     this.broadcastMessage('sourcesChanged', this.sources);
@@ -99,7 +100,7 @@ export class SourceService {
       return;
     }
     if (this.liveSource) {
-      this.obsService.removeSource(this.liveSource.id);
+      this.obsService.removeSource(this.liveSource);
     }
     this.liveSource = {
       id: 'output',
@@ -119,6 +120,12 @@ export class SourceService {
     this.obsService.muteSource(source.id, mute);
     source.muted = mute;
     this.broadcastMessage('sourceMuteChanged', source);
+  }
+
+  private async restart(source: Source) {
+    this.obsService.restart(source);
+    await this.obsHeadlessService.restart(source);
+    this.broadcastMessage('sourceRestarted', source);
   }
 
   private broadcastMessage(channel: string, ...args: any[]) {
