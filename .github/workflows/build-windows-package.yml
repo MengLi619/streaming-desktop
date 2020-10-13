@@ -25,17 +25,3 @@ jobs:
       - name: Build and publish windows package
         run: npm run package:windows
         shell: bash
-  build_mac_package:
-    env:
-      PUBLISH_FILE_EXT: dmg
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Npm install
-        run: npm ci
-
-      - name: Build and publish mac package
-        run: npm run package:mac
-        shell: bash
