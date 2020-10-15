@@ -129,7 +129,8 @@
         "region": "${env.PUBLISH_REGION}",
         "accessKeyId": "${env.PUBLISH_ACCESS_KEY_ID}",
         "accessKeySecret": "${env.PUBLISH_ACCESS_KEY_SECRET}",
-        "resumable": true
+        "resumable": true,
+        "timeout": 120000
       }
     ]
   }
