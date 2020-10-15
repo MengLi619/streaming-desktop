@@ -5,5 +5,3 @@ export const SHOW_NAME = process.env.REACT_APP_SHOW_NAME;
 export const ENABLE_ATEM = process.env.REACT_APP_ENABLE_ATEM === 'true';
 
 export const ATEM_DEVICE_IP = process.env.REACT_APP_ATEM_DEVICE_IP || '';
-
-export const BUFFERING_MB = Number(process.env.REACT_APP_BUFFERING_MB || 2);

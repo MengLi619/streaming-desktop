@@ -1,7 +1,7 @@
 const OSS = require('ali-oss');
-import { Arch } from 'builder-util';
-import { HttpPublisher } from 'electron-publish';
-import { basename, resolve } from 'path';
+const { Arch } = require('builder-util');
+const { HttpPublisher } = require('electron-publish');
+const { basename, resolve } = require('path');
 
 export default class AliOssPublisher extends HttpPublisher {
     providerName = 'alioss';
