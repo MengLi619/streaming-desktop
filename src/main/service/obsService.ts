@@ -6,10 +6,9 @@ import * as uuid from 'uuid';
 import * as path from 'path';
 import { EMonitoringType } from 'obs-studio-node';
 import { ISceneItem } from 'obs-studio-node/module';
-import { BUFFERING_MB } from '../../common/constant';
 
 const DEFAULT_SOURCE_SETTINGS = {
-  buffering_mb: BUFFERING_MB,
+  buffering_mb: 2,
   caching: false,
   clear_on_media_end: true,
   is_local_file: false,
