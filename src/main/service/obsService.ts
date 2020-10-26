@@ -18,7 +18,7 @@ const DEFAULT_SOURCE_SETTINGS = {
   speed_percent: 100,
 };
 
-const DEFAULT_BASE_RESOLUTION = '1920x1080';
+const DEFAULT_BASE_RESOLUTION = '640x360';
 
 @Service()
 export class ObsService {

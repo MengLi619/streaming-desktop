@@ -49,14 +49,6 @@ export class SourceService {
     return ipcRenderer.sendSync('getLiveSource');
   }
 
-  public updateSource(index: number, name: string, url: string, previewUrl: string): void {
-    ipcRenderer.send('updateSource', index, name, url, previewUrl);
-  }
-
-  public removeSource(index: number): void {
-    ipcRenderer.send('removeSource', index);
-  }
-
   public muteSource(source: Source, mute: boolean): void {
     ipcRenderer.send('muteSource', source, mute);
   }
