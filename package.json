@@ -12,7 +12,7 @@
     "postinstall": "node ./scripts/install-native-deps.js",
     "copy-native-deps": "sh ./scripts/copy-native-deps.sh",
     "build-grpc": "node src/build-grpc.js",
-    "build-main": "tsc -p src/main && cp -r src/obs-api src/obs-headless build/",
+    "build-main": "tsc -p src/main && cp -r src/obs-api build/",
     "local": "npm run build-main && env-cmd -f env/local.env concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "server": "npm run build-main && env-cmd -f env/server.env concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "build:prod": "npm run build",

@@ -63,26 +63,6 @@ export class SourceView extends React.Component<SourceViewProps, SourceViewState
     );
   }
 
-  private async onSettingsClicked() {
-    const settings = await this.dialogService.showDialog<AddSourceResult>({
-      title: 'Add Source',
-      component: 'AddSourceDialog',
-      width: 400,
-      height: 400,
-    }, {
-      name: this.props.source?.name,
-      url: this.props.source?.url,
-      previewUrl: this.props.source?.previewUrl,
-    });
-    if (settings) {
-      this.sourceService.updateSource(this.props.index, settings.name, settings.url, settings.previewUrl);
-    }
-  }
-
-  private onRemoveClicked() {
-    this.sourceService.removeSource(this.props.index);
-  }
-
   private onMuteClicked() {
     if (this.state.source) {
       this.sourceService.muteSource(this.state.source, !this.state.source.muted);

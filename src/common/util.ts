@@ -46,3 +46,10 @@ export function getScaleFactor() {
   const currentDisplay = remote.screen.getDisplayMatching(bounds);
   return currentDisplay.scaleFactor;
 }
+
+export function replaceUrlParams(url: string, params: object) {
+  Object.entries(params).forEach(([key, value]) => {
+    url = url.replace(`:${key}`, value);
+  });
+  return url;
+}

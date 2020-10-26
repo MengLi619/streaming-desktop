@@ -35,8 +35,6 @@ export class SourceService {
       this.updateLiveUrl(outputUrl);
     }
 
-    ipcMain.on('updateSource', (event, index: number, name: string, url: string, previewUrl: string) => this.updateSource(index, name, url, previewUrl));
-    ipcMain.on('removeSource', (event, index: number) => this.removeSource(index));
     ipcMain.on('preview', (event, source: Source) => this.preview(source));
     ipcMain.on('take', (event, source: Source, transitionType: TransitionType, transitionDurationMs: number) => this.take(source, transitionType, transitionDurationMs));
     ipcMain.on('updateLiveUrl', (event, url: string) => this.updateLiveUrl(url));
@@ -47,40 +45,6 @@ export class SourceService {
     ipcMain.on('getPreviewSource', event => event.returnValue = this.previewSource);
     ipcMain.on('getProgramTransition', event => event.returnValue = this.programTransition);
     ipcMain.on('getLiveSource', event => event.returnValue = this.liveSource);
-  }
-
-  public async updateSource(index: number, name: string, url: string, previewUrl: string) {
-    const source = this.sources[index];
-    if (source) {
-      await this.obsHeadlessService.removeSource(source);
-      this.obsService.removeSource(source);
-    }
-
-    this.sources[index] = {
-      id: '', // for update
-      sceneId: '', // for update
-      name: name,
-      url: url,
-      previewUrl: previewUrl,
-      muted: source?.muted ?? DEFAULT_MUTED,
-      channel: index, // channel same with source index
-    };
-
-    await this.obsHeadlessService.createSource(this.sources[index]);
-    this.obsService.createSource(this.sources[index]);
-    this.broadcastMessage('sourcesChanged', this.sources);
-    this.storageService.saveSources(this.sources);
-  }
-
-  public async removeSource(index: number) {
-    const source = this.sources[index];
-    if (source) {
-      await this.obsHeadlessService.removeSource(source);
-      await this.obsService.removeSource(source);
-    }
-    delete this.sources[index];
-    this.broadcastMessage('sourcesChanged', this.sources);
-    this.storageService.saveSources(this.sources);
   }
 
   public preview(source: Source) {

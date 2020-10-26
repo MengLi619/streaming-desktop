@@ -3,7 +3,7 @@ const { Arch } = require('builder-util');
 const { HttpPublisher } = require('electron-publish');
 const { basename, resolve } = require('path');
 
-export default class AliOssPublisher extends HttpPublisher {
+class AliOssPublisher extends HttpPublisher {
     providerName = 'alioss';
     useSafeName = true;
     client;
@@ -94,3 +94,5 @@ export default class AliOssPublisher extends HttpPublisher {
         return `${this.providerName}(${this.config.bucket})`;
     }
 }
+
+exports.default = AliOssPublisher;
