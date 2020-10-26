@@ -4,8 +4,6 @@ import { Display } from '../../shared/Display/Display';
 import { Source } from '../../../types/obs';
 import { Container } from 'typedi';
 import { SourceService } from '../../../service/sourceService';
-import { DialogService } from '../../../service/dialogService';
-import { AddSourceResult } from '../../dialogs/AddSourceDialog/AddSourceDialog';
 
 export type SourceViewProps = {
   index: number;
@@ -18,7 +16,6 @@ export type SourceViewState = {
 };
 
 export class SourceView extends React.Component<SourceViewProps, SourceViewState> {
-  private readonly dialogService = Container.get(DialogService);
   private readonly sourceService = Container.get(SourceService);
 
   public constructor(props: SourceViewProps) {
@@ -54,8 +51,6 @@ export class SourceView extends React.Component<SourceViewProps, SourceViewState
             <>
               <i className="icon-reset icon-button" onClick={() => this.onRestartClicked()} />
               <i className={`${!this.state.source || this.state.source.muted ? 'icon-mute' : 'icon-audio'} icon-button`} onClick={() => this.onMuteClicked()} />
-              {/*<i className="icon-subtract icon-button" onClick={() => this.onRemoveClicked()} />*/}
-              {/*<i className="icon-settings icon-button" onClick={() => this.onSettingsClicked()} />*/}
             </>
           }
         </div>
