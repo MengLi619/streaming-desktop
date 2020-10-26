@@ -130,7 +130,7 @@
         "accessKeyId": "${env.PUBLISH_ACCESS_KEY_ID}",
         "accessKeySecret": "${env.PUBLISH_ACCESS_KEY_SECRET}",
         "resumable": true,
-        "timeout": 120000
+        "timeout": 3600000
       }
     ]
   }
