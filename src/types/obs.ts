@@ -20,3 +20,10 @@ export type Transition = {
   type: TransitionType;
   source: Source;
 };
+
+export type Bounds = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}

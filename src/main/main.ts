@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import * as isDev from 'electron-is-dev';
 import * as path from 'path';
+import * as os from 'os';
 import * as dotenv from 'dotenv';
 
 // TODO: load env from local path when in the production, remove this in the future
@@ -36,6 +37,7 @@ async function startApp() {
     fullscreen: true,
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true,
     }
   });
   mainWindow.removeMenu();
@@ -54,6 +56,7 @@ async function startApp() {
     show: false,
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true,
     },
   });
   dialogWindow.removeMenu();
@@ -65,8 +68,10 @@ async function startApp() {
 }
 
 // Fix windows scale factor
-app.commandLine.appendSwitch('high-dpi-support', '1');
-app.commandLine.appendSwitch('force-device-scale-factor', '1');
+if (os.platform() === 'win32') {
+  app.commandLine.appendSwitch('high-dpi-support', '1');
+  app.commandLine.appendSwitch('force-device-scale-factor', '1');
+}
 
 app.on('ready', startApp);
 
@@ -112,6 +117,7 @@ ipcMain.on('showExternalWindow', () => {
       height: 540,
       webPreferences: {
         nodeIntegration: true,
+        enableRemoteModule: true,
       }
     });
     externalWindow.removeMenu();

@@ -64,7 +64,8 @@ export class SourceService {
       return;
     }
     if (this.liveSource) {
-      this.obsService.removeSource(this.liveSource);
+      // TODO: remove source
+      // this.obsService.removeSource(this.liveSource);
     }
     this.liveSource = {
       id: 'output',
@@ -81,7 +82,7 @@ export class SourceService {
   }
 
   private muteSource(source: Source, mute: boolean) {
-    this.obsService.muteSource(source.id, mute);
+    this.obsService.muteSource(source, mute);
     source.muted = mute;
     this.broadcastMessage('sourceMuteChanged', source);
   }

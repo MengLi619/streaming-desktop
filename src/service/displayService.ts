@@ -4,23 +4,15 @@ import { ipcRenderer } from 'electron';
 @Service()
 export class DisplayService {
 
-  public createOBSDisplay(electronWindowId: number, name: string, sourceId: string): void {
-    ipcRenderer.sendSync('createOBSDisplay', electronWindowId, name, sourceId);
+  public createOBSDisplay(name: string, electronWindowId: number, scaleFactor: number, sourceId: string): void {
+    ipcRenderer.sendSync('createOBSDisplay', name, electronWindowId, scaleFactor, sourceId);
   }
 
-  public moveOBSDisplay(name: string, x: number, y: number): void {
-    ipcRenderer.sendSync('moveOBSDisplay', name, x, y);
-  }
-
-  public resizeOBSDisplay(name: string, width: number, height: number): void {
-    ipcRenderer.sendSync('resizeOBSDisplay', name, width, height);
+  public moveOBSDisplay(name: string, x: number, y: number, width: number, height: number): void {
+    ipcRenderer.sendSync('moveOBSDisplay', name, x, y, width, height);
   }
 
   public destroyOBSDisplay(name: string): void {
     ipcRenderer.sendSync('destroyOBSDisplay', name);
-  }
-
-  public createOBSIOSurface(name: string): number {
-    return ipcRenderer.sendSync('createOBSIOSurface', name);
   }
 }
