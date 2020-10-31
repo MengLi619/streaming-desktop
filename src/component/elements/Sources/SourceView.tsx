@@ -33,6 +33,21 @@ export class SourceView extends React.Component<SourceViewProps, SourceViewState
         });
       }
     });
+    this.sourceService.sourceRestarted.on(this, source => {
+      if (source.id === this.state.source?.id) {
+        this.setState({
+          source: undefined,
+        });
+        this.setState({
+          source: source,
+        });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.sourceService.sourceMuteChanged.off(this);
+    this.sourceService.sourceRestarted.off(this);
   }
 
   public render() {
