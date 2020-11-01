@@ -4,6 +4,19 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  height: 40px;
+
+  .full-screen {
+    flex: 0 0 52px;
+    display: flex;
+    align-self: stretch;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .logo {
+    height: 100%;
+  }
 
   .header-bar {
     flex: 1;
@@ -20,6 +33,7 @@
       flex-direction: row;
       justify-content: center;
       align-items: center;
+      height: 100%;
     }
 
     .live {
