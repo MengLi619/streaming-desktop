@@ -30,7 +30,7 @@
     "env-cmd": "^10.1.0",
     "fs-extra": "^9.0.0",
     "moment": "^2.27.0",
-    "obs-node": "git+https://github.com/MengLi619/obs-node.git#v1.0.21",
+    "obs-node": "git+https://github.com/MengLi619/obs-node.git#v1.0.22",
     "react": "^16.13.1",
     "react-data-table-component": "^6.11.0",
     "react-dom": "^16.13.1",
