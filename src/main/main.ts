@@ -108,9 +108,10 @@ ipcMain.on('openDevTools', () => {
 });
 
 // External window
-ipcMain.on('showExternalWindow', () => {
+ipcMain.on('showExternalWindow', (event, layouts) => {
   if (externalWindow) {
     externalWindow.show();
+    externalWindow.webContents.send('layoutsUpdated', layouts);
   } else {
     externalWindow = new BrowserWindow({
       width: 960,
@@ -121,7 +122,7 @@ ipcMain.on('showExternalWindow', () => {
       }
     });
     externalWindow.removeMenu();
-    externalWindow.loadURL(`${loadUrl}?window=external`);
+    externalWindow.loadURL(`${loadUrl}?window=external&layouts=${layouts}`);
     externalWindow.on('close', e => {
       externalWindow = undefined;
     });

@@ -35,7 +35,9 @@ export class App extends React.Component<{}, AppState> {
     if (isDialogWindow()) {
       return <DialogWindow />;
     } else if (isExternalWindow()) {
-      return <ExternalWindow />
+      const url = new URL(window.location.href);
+      const layouts = Number(url.searchParams.get('layouts') || '12');
+      return <ExternalWindow layouts={layouts} />
     } else {
       return (
         <Main>

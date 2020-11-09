@@ -1,23 +1,43 @@
 import './ExternalWindow.scss';
 import React from 'react';
-import { remote } from 'electron';
+import { remote, ipcRenderer, IpcRendererEvent } from 'electron';
 import { Sources } from '../../elements/Sources/Sources';
 import { ProgramLocal } from '../../elements/ProgramLocal/ProgramLocal';
 import { Preview } from '../../elements/Preview/Preview';
 import { ProgramLive } from '../../elements/ProgramLive/ProgramLive';
 import { CurrentTime } from '../../elements/CurrentTime/CurrentTime';
 
+type ExternalWindowProps = {
+  layouts: number;
+}
+
 type ExternalWindowState = {
+  layouts: number;
   fullscreen: boolean;
 };
 
-export class ExternalWindow extends React.Component<{}, ExternalWindowState> {
+export class ExternalWindow extends React.Component<ExternalWindowProps, ExternalWindowState> {
 
-  public constructor(props: {}) {
+  private readonly updateLayouts = (event: IpcRendererEvent, layouts: number) => {
+    this.setState({
+      layouts: layouts,
+    });
+  };
+
+  public constructor(props: ExternalWindowProps) {
     super(props);
     this.state = {
+      layouts: props.layouts,
       fullscreen: remote.getCurrentWindow().isFullScreen(),
     };
+  }
+
+  public componentDidMount() {
+    ipcRenderer.on('layoutsUpdated', this.updateLayouts);
+  }
+
+  public componentWillUnmount() {
+    ipcRenderer.off('layoutsUpdated', this.updateLayouts);
   }
 
   public render() {
@@ -36,8 +56,12 @@ export class ExternalWindow extends React.Component<{}, ExternalWindowState> {
           </div>
         </div>
         <div className='bottom'>
-          <div className='Sources-container'>
-            <Sources rows={3} hideSetting={true} />
+          <div className={`Sources-container layouts${this.state.layouts}`}>
+            <Sources
+              sourceCount={this.state.layouts}
+              rows={ this.state.layouts === 12 ? 3 : 2}
+              hideSetting={true}
+            />
           </div>
           <div className='ProgramLive_CurrentTime-container'>
             <div className='ProgramLive-container'>
