@@ -8,20 +8,22 @@ import { SourceService } from '../../../service/sourceService';
 
 type SourcesProps = {
   rows: number;
+  sourceCount: number;
   hideSetting?: boolean;
 }
 
 type SourcesState = {
+  rows: number;
+  sourceCount: number;
   sources: Record<number, Source>;
   previewSource?: Source;
   programTransition?: Transition;
 };
 
-const MAX_SOURCE_COUNT = 12;
-
 export class Sources extends React.Component<SourcesProps, SourcesState> {
   static defaultProps = {
     rows: 2,
+    sourceCount: 12,
   };
 
   private readonly sourceService = Container.get(SourceService);
@@ -29,13 +31,17 @@ export class Sources extends React.Component<SourcesProps, SourcesState> {
   constructor(props: SourcesProps) {
     super(props);
     this.state = {
+      rows: props.rows,
+      sourceCount: props.sourceCount,
       sources: this.sourceService.sources,
       previewSource: this.sourceService.previewSource,
       programTransition: this.sourceService.programTransition,
     };
+    console.log(`Sources constructor called`);
   }
 
   public componentDidMount() {
+    console.log(`Sources componentDidMount called`);
     this.sourceService.sourcesChanged.on(this, sources => {
       this.setState({
         sources: sources
@@ -53,7 +59,17 @@ export class Sources extends React.Component<SourcesProps, SourcesState> {
     });
   }
 
+  public componentDidUpdate(prevProps: Readonly<SourcesProps>, prevState: Readonly<SourcesState>, snapshot?: any) {
+    if (this.props.sourceCount !== prevProps.sourceCount || this.props.rows !== prevProps.rows) {
+      this.setState({
+        sourceCount: this.props.sourceCount,
+        rows: this.props.rows,
+      });
+    }
+  }
+
   public componentWillUnmount() {
+    this.sourceService.sourcesChanged.off(this);
     this.sourceService.previewChanged.off(this);
     this.sourceService.programChanged.off(this);
   }
@@ -61,9 +77,9 @@ export class Sources extends React.Component<SourcesProps, SourcesState> {
   public render() {
     return (
       <div className='Sources'>
-        <div className='SourceView-list'>
+        <div className={`SourceView-list sources${this.state.sourceCount}`}>
           {
-            sequence(0, MAX_SOURCE_COUNT - 1).map(index => {
+            sequence(0, this.state.sourceCount - 1).map(index => {
               const source = this.state.sources[index];
               const isPreview = !!source && this.state.previewSource?.id === source?.id;
               const isProgram = !!source && this.state.programTransition?.source?.id === source?.id;

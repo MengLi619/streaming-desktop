@@ -15,11 +15,6 @@ export function isExternalWindow() {
   return url.searchParams.get('window') === 'external';
 }
 
-export function isWorkerWindow() {
-  const url = new URL(window.location.href);
-  return url.searchParams.get('window') === 'worker';
-}
-
 export enum OS {
   Windows = 'win32',
   Mac = 'darwin',

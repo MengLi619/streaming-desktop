@@ -125,4 +125,26 @@
     flex-shrink: 0;
     background: var(--background);
   }
+
+  .External-items {
+    display: flex;
+    flex-direction: column;
+    background: var(--background);
+    margin-left: 0 !important;
+
+    .External-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      &.cell i {
+        top: 15px;
+      }
+
+      &.cell span {
+        margin-top: 15px;
+      }
+    }
+  }
 }

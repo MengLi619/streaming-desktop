@@ -30,5 +30,13 @@
         width: calc(25% - 2.5px);
       }
     }
+
+    &.sources4 {
+      .SourceView-item {
+        &.rows2 {
+          width: calc(50% - 2px);
+        }
+      }
+    }
   }
 }

@@ -29,7 +29,17 @@
     flex-direction: row;
 
     .Sources-container {
-      width: calc((20vh - 20px) * 4 * 16 / 9)
+      // for 12 layouts, 3 rows: width = (height / 3 - margin) * 16 / 9 * 4
+      width: calc((60vh / 3 - 20px) * 4 * 16 / 9);
+
+      &.layouts4 {
+        // for 4 layouts, 2 rows: width = (height / 2 - margin) * 16 / 9 * 2
+        width: calc((30vh - 20px) * 16 / 9 * 2);
+      }
+    }
+
+    .ProgramLive-container {
+      margin: 0 20px;
     }
 
     .ProgramLive_CurrentTime-container {
