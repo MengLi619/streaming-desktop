@@ -32,7 +32,11 @@ export class ObsService {
 
   public createSource(source: Source): void {
     obs.addScene(source.sceneId);
-    obs.addSource(source.sceneId, source.id, 'MediaSource', source.previewUrl || '');
+    obs.addSource(source.sceneId, source.id, 'MediaSource', source.previewUrl as string);
+  }
+
+  public updateSourceUrl(source: Source): void {
+    obs.updateSource(source.sceneId, source.id, source.previewUrl as string);
   }
 
   public createOBSDisplay(name: string, electronWindowId: number, scaleFactor: number, sourceId: string): void {

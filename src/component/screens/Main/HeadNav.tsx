@@ -5,7 +5,7 @@ import { DialogService } from '../../../service/dialogService';
 import { OutputSetting } from '../../dialogs/OutputSettingDialog/OutputSettingDialog';
 import { SourceService } from '../../../service/sourceService';
 import { remote } from 'electron';
-import logo from './img/logo.jpg';
+import logo from './img/logo.png';
 
 type HeadNavState = {
   fullscreen: boolean;
