@@ -1,4 +1,4 @@
-export type Source = {
+export interface Source {
   id: string;
   name: string;
   url: string;
@@ -8,6 +8,11 @@ export type Source = {
   channel?: number;
 }
 
+export interface Output {
+  url: string;
+  previewUrl: string;
+}
+
 export enum TransitionType {
   Cut = 'cut_transition',
   Fade = 'fade_transition',
@@ -15,13 +20,13 @@ export enum TransitionType {
   Slide = 'slide_transition',
 }
 
-export type Transition = {
+export interface Transition {
   id: string;
   type: TransitionType;
   source: Source;
-};
+}
 
-export type Bounds = {
+export interface Bounds {
   x: number;
   y: number;
   width: number;

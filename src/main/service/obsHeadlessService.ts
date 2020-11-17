@@ -1,10 +1,11 @@
 import { Service } from 'typedi';
 import axios from 'axios';
 import { OBS_SERVER_URL } from '../../common/constant';
-import { Source, TransitionType } from '../../types/obs';
+import { Output, Source, TransitionType } from '../../types/obs';
 import { replaceUrlParams } from '../../common/util';
 
 const GET_SCENES_URL = `${OBS_SERVER_URL}/v1/scenes`;
+const GET_OUTPUT_URL = `${OBS_SERVER_URL}/v1/output`;
 const SWITCH_URL = `${OBS_SERVER_URL}/v1/switch/:sceneId`;
 const RESTART_SOURCE_URL = `${OBS_SERVER_URL}/v1/restart`;
 
@@ -30,8 +31,11 @@ export class ObsHeadlessService {
     }
   }
 
-  public async initialize(): Promise<Record<number, Source>> {
-    const scenes = (await axios.get(GET_SCENES_URL)).data as SceneResponse[];
+  public async initialize(): Promise<{ sources: Record<number, Source>, output: Output }> {
+    const [scenes, output] = await Promise.all([
+      axios.get(GET_SCENES_URL).then(res => res.data as SceneResponse[]),
+      axios.get(GET_OUTPUT_URL).then(res => res.data as Output),
+    ]);
     const sources: Record<number, Source> = {};
     let index = 0;
     scenes.forEach(scene => {
@@ -47,7 +51,7 @@ export class ObsHeadlessService {
         };
       });
     });
-    return sources;
+    return { sources, output };
   }
 
   public async switchSource(source: Source, transitionType: TransitionType, transitionDurationMs: number) {

@@ -22,7 +22,8 @@ export class SourceService {
   public async initialize() {
     // Initialize local obs
     this.obsService.initialize();
-    this.sources = await this.obsHeadlessService.initialize();
+    const { sources, output } = await this.obsHeadlessService.initialize();
+    this.sources = sources;
 
     // Create sources for local obs
     for (const source of Object.values(this.sources)) {
@@ -30,10 +31,7 @@ export class SourceService {
     }
 
     // Create output
-    const outputUrl = this.storageService.loadOutputUrl();
-    if (outputUrl) {
-      this.updateLiveUrl(outputUrl);
-    }
+    this.updateLiveUrl(output.previewUrl);
 
     ipcMain.on('preview', (event, source: Source) => this.preview(source));
     ipcMain.on('take', (event, source: Source, transitionType: TransitionType, transitionDurationMs: number) => this.take(source, transitionType, transitionDurationMs));
@@ -64,19 +62,21 @@ export class SourceService {
       return;
     }
     if (this.liveSource) {
-      // TODO: remove source
-      // this.obsService.removeSource(this.liveSource);
+      this.liveSource.url = url;
+      this.liveSource.previewUrl = url;
+      this.obsService.updateSourceUrl(this.liveSource);
+    } else {
+      this.liveSource = {
+        id: 'output',
+        name: 'Output',
+        url: url,
+        previewUrl: url,
+        muted: DEFAULT_MUTED,
+        sceneId: uuid.v4(),
+        channel: 63, // output channel
+      };
+      this.obsService.createSource(this.liveSource);
     }
-    this.liveSource = {
-      id: 'output',
-      name: 'Output',
-      url: url,
-      previewUrl: url,
-      muted: this.liveSource?.muted ?? DEFAULT_MUTED,
-      sceneId: uuid.v4(),
-      channel: 63, // output channel
-    };
-    this.obsService.createSource(this.liveSource);
     this.broadcastMessage('liveChanged', this.liveSource);
     this.storageService.saveOutputUrl(url);
   }
